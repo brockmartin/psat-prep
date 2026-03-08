@@ -4,6 +4,8 @@ import { ThemeProvider } from "@/components/layout/theme-provider"
 import { Nav } from "@/components/layout/nav"
 import { ScrollToTop } from "@/components/scroll-to-top"
 import { BackToTop } from "@/components/back-to-top"
+import { ChatTrigger } from "@/components/chat/chat-trigger"
+import { SessionProvider } from "@/contexts/session-context"
 import "./globals.css"
 
 const dmSans = DM_Sans({
@@ -61,12 +63,15 @@ export default function RootLayout({
           enableSystem
           disableTransitionOnChange
         >
-          <ScrollToTop />
-          <Nav />
-          <main className="mx-auto max-w-7xl px-4 py-6 sm:px-6 lg:px-8">
-            {children}
-          </main>
-          <BackToTop />
+          <SessionProvider>
+            <ScrollToTop />
+            <Nav />
+            <main className="mx-auto max-w-7xl px-4 py-6 sm:px-6 lg:px-8">
+              {children}
+            </main>
+            <BackToTop />
+            <ChatTrigger />
+          </SessionProvider>
         </ThemeProvider>
       </body>
     </html>

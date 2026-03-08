@@ -2,6 +2,7 @@ import Link from "next/link"
 import { notFound } from "next/navigation"
 import ReactMarkdown from "react-markdown"
 import { getWeek, getTopic } from "@/lib/content"
+import { getSkillVideos, getSkillForQuestion } from "@/lib/skills"
 import { Button } from "@/components/ui/button"
 import {
   Card,
@@ -12,12 +13,14 @@ import {
 import { Separator } from "@/components/ui/separator"
 import { CollapsibleHint } from "@/components/collapsible-hint"
 import { LessonTracker } from "@/components/lesson-tracker"
+import { VideoSection } from "@/components/video-section"
 import {
   ChevronLeft,
   ChevronRight,
   ExternalLink,
   PlayCircle,
 } from "lucide-react"
+import type { VideoResource } from "@/data/video-library"
 
 interface TopicPageProps {
   params: Promise<{ weekNumber: string; topicSlug: string }>
@@ -59,6 +62,23 @@ export default async function TopicPage({ params }: TopicPageProps) {
   // Extract hints from questions (questions with difficulty >= 2 get a hint from their explanation)
   const workedExamples = topic.questions.filter((q) => q.difficulty >= 2)
 
+  // Derive skill-based videos from the topic's questions
+  const topicSkillIds = new Set<string>()
+  for (const q of topic.questions) {
+    const skillId = q.skillId ?? getSkillForQuestion(q.id)
+    if (skillId) topicSkillIds.add(skillId)
+  }
+  const topicVideos: VideoResource[] = []
+  const seenVideoIds = new Set<string>()
+  for (const skillId of topicSkillIds) {
+    for (const v of getSkillVideos(skillId)) {
+      if (!seenVideoIds.has(v.videoId)) {
+        seenVideoIds.add(v.videoId)
+        topicVideos.push(v)
+      }
+    }
+  }
+
   return (
     <div className="mx-auto max-w-3xl space-y-8">
       {/* Track lesson progress */}
@@ -91,8 +111,11 @@ export default async function TopicPage({ params }: TopicPageProps) {
         </p>
       </div>
 
-      {/* Video link */}
-      {topic.videoLink && (
+      {/* Video section — embedded videos from the skill-based library */}
+      {topicVideos.length > 0 && <VideoSection videos={topicVideos} />}
+
+      {/* Fallback external video link (shown only when no embedded videos) */}
+      {topicVideos.length === 0 && topic.videoLink && (
         <a
           href={topic.videoLink}
           target="_blank"

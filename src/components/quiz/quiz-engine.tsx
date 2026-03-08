@@ -15,9 +15,17 @@ import {
   Star,
   RotateCcw,
   ArrowLeft,
+  HelpCircle,
+  Sparkles,
 } from "lucide-react";
+import { InlineHelp } from "@/components/quiz/inline-help";
+import { StepByStepSolver } from "@/components/quiz/step-by-step-solver";
+import { FixTheMistake } from "@/components/quiz/fix-the-mistake";
 import type { Question, Domain } from "@/types/content";
 import { cn } from "@/lib/utils";
+import { useSession } from "@/contexts/session-context";
+import { useAuth } from "@/hooks/use-auth";
+import { getSkillForQuestion } from "@/lib/skills";
 
 // ---------------------------------------------------------------------------
 // Types
@@ -28,6 +36,7 @@ export interface QuizResponseItem {
   selectedAnswer: string;
   correctAnswer: string;
   isCorrect: boolean;
+  aiHelpUsed: boolean;
 }
 
 export interface QuizResult {
@@ -92,6 +101,10 @@ export function QuizEngine({
   showExplanationImmediately = true,
   allowReview = true,
 }: QuizEngineProps) {
+  // --- Hooks ---------------------------------------------------------------
+  const { user } = useAuth();
+  const { logInteraction, sessionId } = useSession();
+
   // --- State ---------------------------------------------------------------
   const [currentIndex, setCurrentIndex] = useState(0);
   const [responses, setResponses] = useState<Record<string, string>>({});
@@ -101,8 +114,13 @@ export function QuizEngine({
   const [reviewIndex, setReviewIndex] = useState(0);
   const [studentInput, setStudentInput] = useState("");
   const [transitioning, setTransitioning] = useState(false);
+  const [aiHelpOpen, setAiHelpOpen] = useState(false);
+  const [aiHelpUsedMap, setAiHelpUsedMap] = useState<Record<string, boolean>>(
+    {}
+  );
 
   const startTimeRef = useRef(Date.now());
+  const questionStartTimeRef = useRef(Date.now());
   const [timeRemaining, setTimeRemaining] = useState(timeLimitSeconds ?? 0);
 
   // --- Derived -------------------------------------------------------------
@@ -142,6 +160,7 @@ export function QuizEngine({
       selectedAnswer: responses[q.id] ?? "",
       correctAnswer: q.correctAnswer,
       isCorrect: (responses[q.id] ?? "") === q.correctAnswer,
+      aiHelpUsed: aiHelpUsedMap[q.id] ?? false,
     }));
     const correctCount = responseItems.filter((r) => r.isCorrect).length;
     return {
@@ -151,7 +170,27 @@ export function QuizEngine({
       responses: responseItems,
       timeSpentSeconds: elapsed,
     };
-  }, [questions, responses, totalQuestions]);
+  }, [questions, responses, totalQuestions, aiHelpUsedMap]);
+
+  // --- Interaction Logging -------------------------------------------------
+
+  function logAnswer(q: Question, answer: string) {
+    if (!user || !sessionId) return;
+    const timeSpent = Math.round((Date.now() - questionStartTimeRef.current) / 1000);
+    const skillId = q.skillId ?? getSkillForQuestion(q.id);
+    logInteraction({
+      userId: user.id,
+      questionId: q.id,
+      skillId,
+      response: answer,
+      correctAnswer: q.correctAnswer,
+      isCorrect: answer === q.correctAnswer,
+      timeSpentSeconds: timeSpent,
+      hintUsed: false,
+      aiHelpUsed: aiHelpUsedMap[q.id] ?? false,
+      difficultyLevel: q.difficulty,
+    });
+  }
 
   // --- Handlers ------------------------------------------------------------
 
@@ -164,6 +203,7 @@ export function QuizEngine({
   function handleSelectAnswer(answer: string) {
     if (showExplanationImmediately && showFeedback) return; // already answered
     setResponses((prev) => ({ ...prev, [question.id]: answer }));
+    logAnswer(question, answer);
     if (showExplanationImmediately) {
       setShowFeedback(true);
     }
@@ -171,7 +211,9 @@ export function QuizEngine({
 
   function handleSubmitStudentProduced() {
     if (!studentInput.trim()) return;
-    setResponses((prev) => ({ ...prev, [question.id]: studentInput.trim() }));
+    const answer = studentInput.trim();
+    setResponses((prev) => ({ ...prev, [question.id]: answer }));
+    logAnswer(question, answer);
     if (showExplanationImmediately) {
       setShowFeedback(true);
     }
@@ -191,6 +233,8 @@ export function QuizEngine({
         setCurrentIndex((i) => i + 1);
         setShowFeedback(false);
         setStudentInput("");
+        setAiHelpOpen(false);
+        questionStartTimeRef.current = Date.now();
       });
     } else {
       handleFinish();
@@ -203,8 +247,19 @@ export function QuizEngine({
         setCurrentIndex((i) => i - 1);
         setShowFeedback(false);
         setStudentInput("");
+        setAiHelpOpen(false);
+        questionStartTimeRef.current = Date.now();
       });
     }
+  }
+
+  function handleOpenAiHelp() {
+    setAiHelpOpen(true);
+    setAiHelpUsedMap((prev) => ({ ...prev, [question.id]: true }));
+  }
+
+  function handleCloseAiHelp() {
+    setAiHelpOpen(false);
   }
 
   // --- Review mode data ----------------------------------------------------
@@ -500,164 +555,243 @@ export function QuizEngine({
           transitioning ? "opacity-0" : "opacity-100"
         )}
       >
-        <Card>
-          <CardContent className="space-y-4 pt-2">
-            {/* Badges */}
-            <div className="flex flex-wrap items-center gap-2">
-              <Badge variant="secondary">
-                {DOMAIN_LABELS[question.domain]}
-              </Badge>
-              <div className="flex items-center gap-0.5">
-                {difficultyStars(question.difficulty)}
+        {/* Step-by-step solver */}
+        {question.type === "step_by_step" && question.steps ? (
+          <StepByStepSolver
+            problem={question.text}
+            steps={question.steps}
+            onComplete={(allCorrect) => {
+              const answer = allCorrect ? question.correctAnswer : "__incorrect__";
+              setResponses((prev) => ({
+                ...prev,
+                [question.id]: answer,
+              }));
+              logAnswer(question, answer);
+              setShowFeedback(true);
+            }}
+          />
+        ) : question.type === "fix_mistake" && question.wrongSolution ? (
+          /* Fix-the-mistake */
+          <FixTheMistake
+            problem={question.text}
+            wrongSolution={question.wrongSolution}
+            errorExplanation={question.errorExplanation ?? question.explanation}
+            onComplete={(foundError) => {
+              const answer = foundError ? question.correctAnswer : "__incorrect__";
+              setResponses((prev) => ({
+                ...prev,
+                [question.id]: answer,
+              }));
+              logAnswer(question, answer);
+              setShowFeedback(true);
+            }}
+          />
+        ) : (
+          /* Multiple choice / Student-produced */
+          <Card>
+            <CardContent className="space-y-4 pt-2">
+              {/* Badges */}
+              <div className="flex flex-wrap items-center gap-2">
+                <Badge variant="secondary">
+                  {DOMAIN_LABELS[question.domain]}
+                </Badge>
+                <div className="flex items-center gap-0.5">
+                  {difficultyStars(question.difficulty)}
+                </div>
               </div>
-            </div>
 
-            {/* Question text */}
-            <p className="text-base leading-relaxed">{question.text}</p>
+              {/* Question text */}
+              <p className="text-base leading-relaxed">{question.text}</p>
 
-            {/* Answer options: Multiple Choice */}
-            {question.type === "multiple_choice" && question.options ? (
-              <div className="space-y-2">
-                {question.options.map((opt) => {
-                  const isSelected = selectedAnswer === opt.label;
-                  const isOptionCorrect =
-                    opt.label === question.correctAnswer;
+              {/* Answer options: Multiple Choice */}
+              {question.type === "multiple_choice" && question.options ? (
+                <div className="space-y-2">
+                  {question.options.map((opt) => {
+                    const isSelected = selectedAnswer === opt.label;
+                    const isOptionCorrect =
+                      opt.label === question.correctAnswer;
 
-                  let optionStyles =
-                    "border-border bg-background hover:bg-muted/60 cursor-pointer";
+                    let optionStyles =
+                      "border-border bg-background hover:bg-muted/60 cursor-pointer";
 
-                  if (showExplanationImmediately && showFeedback) {
-                    // Feedback shown
-                    if (isOptionCorrect) {
-                      optionStyles =
-                        "border-green-500 bg-green-500/10 dark:bg-green-500/20";
-                    } else if (isSelected && !isOptionCorrect) {
-                      optionStyles =
-                        "border-red-500 bg-red-500/10 dark:bg-red-500/20";
-                    } else {
-                      optionStyles =
-                        "border-border bg-background opacity-60";
-                    }
-                  } else if (
-                    !showExplanationImmediately &&
-                    isSelected
-                  ) {
-                    // Practice test mode — blue highlight
-                    optionStyles =
-                      "border-blue-500 bg-blue-500/10 dark:bg-blue-500/20";
-                  }
-
-                  return (
-                    <button
-                      key={opt.label}
-                      type="button"
-                      disabled={
-                        showExplanationImmediately && showFeedback
+                    if (showExplanationImmediately && showFeedback) {
+                      // Feedback shown
+                      if (isOptionCorrect) {
+                        optionStyles =
+                          "border-green-500 bg-green-500/10 dark:bg-green-500/20";
+                      } else if (isSelected && !isOptionCorrect) {
+                        optionStyles =
+                          "border-red-500 bg-red-500/10 dark:bg-red-500/20";
+                      } else {
+                        optionStyles =
+                          "border-border bg-background opacity-60";
                       }
-                      onClick={() => handleSelectAnswer(opt.label)}
-                      className={cn(
-                        "flex w-full min-h-12 items-center gap-3 rounded-lg border px-4 py-3 text-left transition-colors",
-                        optionStyles
-                      )}
-                    >
-                      <span className="flex h-7 w-7 shrink-0 items-center justify-center rounded-full border text-sm font-medium">
-                        {opt.label}
-                      </span>
-                      <span className="flex-1 text-sm">{opt.text}</span>
-                      {showExplanationImmediately &&
-                        showFeedback &&
-                        isOptionCorrect && (
-                          <CheckCircle className="h-5 w-5 shrink-0 text-green-500" />
-                        )}
-                      {showExplanationImmediately &&
-                        showFeedback &&
-                        isSelected &&
-                        !isOptionCorrect && (
-                          <XCircle className="h-5 w-5 shrink-0 text-red-500" />
-                        )}
-                    </button>
-                  );
-                })}
-              </div>
-            ) : (
-              /* Student-produced response */
-              <div className="space-y-3">
-                {showExplanationImmediately && showFeedback ? (
-                  <div className="space-y-2">
-                    <div className="flex items-center gap-2 text-sm">
-                      <span className="text-muted-foreground">
-                        Your answer:
-                      </span>
-                      <span
+                    } else if (
+                      !showExplanationImmediately &&
+                      isSelected
+                    ) {
+                      // Practice test mode — blue highlight
+                      optionStyles =
+                        "border-blue-500 bg-blue-500/10 dark:bg-blue-500/20";
+                    }
+
+                    return (
+                      <button
+                        key={opt.label}
+                        type="button"
+                        disabled={
+                          showExplanationImmediately && showFeedback
+                        }
+                        onClick={() => handleSelectAnswer(opt.label)}
                         className={cn(
-                          "font-medium",
-                          isCorrect ? "text-green-500" : "text-red-500"
+                          "flex w-full min-h-12 items-center gap-3 rounded-lg border px-4 py-3 text-left transition-colors",
+                          optionStyles
                         )}
                       >
-                        {selectedAnswer}
-                      </span>
-                      {isCorrect ? (
-                        <CheckCircle className="h-4 w-4 text-green-500" />
-                      ) : (
-                        <XCircle className="h-4 w-4 text-red-500" />
-                      )}
-                    </div>
-                    {!isCorrect && (
+                        <span className="flex h-7 w-7 shrink-0 items-center justify-center rounded-full border text-sm font-medium">
+                          {opt.label}
+                        </span>
+                        <span className="flex-1 text-sm">{opt.text}</span>
+                        {showExplanationImmediately &&
+                          showFeedback &&
+                          isOptionCorrect && (
+                            <CheckCircle className="h-5 w-5 shrink-0 text-green-500" />
+                          )}
+                        {showExplanationImmediately &&
+                          showFeedback &&
+                          isSelected &&
+                          !isOptionCorrect && (
+                            <XCircle className="h-5 w-5 shrink-0 text-red-500" />
+                          )}
+                      </button>
+                    );
+                  })}
+                </div>
+              ) : (
+                /* Student-produced response */
+                <div className="space-y-3">
+                  {showExplanationImmediately && showFeedback ? (
+                    <div className="space-y-2">
                       <div className="flex items-center gap-2 text-sm">
                         <span className="text-muted-foreground">
-                          Correct answer:
+                          Your answer:
                         </span>
-                        <span className="font-medium text-green-500">
-                          {question.correctAnswer}
+                        <span
+                          className={cn(
+                            "font-medium",
+                            isCorrect ? "text-green-500" : "text-red-500"
+                          )}
+                        >
+                          {selectedAnswer}
                         </span>
+                        {isCorrect ? (
+                          <CheckCircle className="h-4 w-4 text-green-500" />
+                        ) : (
+                          <XCircle className="h-4 w-4 text-red-500" />
+                        )}
                       </div>
-                    )}
-                  </div>
-                ) : (
-                  <div className="flex gap-2">
-                    <Input
-                      value={
-                        selectedAnswer !== undefined
-                          ? selectedAnswer
-                          : studentInput
-                      }
-                      onChange={(e) => setStudentInput(e.target.value)}
-                      placeholder="Type your answer..."
-                      disabled={
-                        showExplanationImmediately && isAnswered
-                      }
-                      onKeyDown={(e) => {
-                        if (e.key === "Enter") {
-                          handleSubmitStudentProduced();
+                      {!isCorrect && (
+                        <div className="flex items-center gap-2 text-sm">
+                          <span className="text-muted-foreground">
+                            Correct answer:
+                          </span>
+                          <span className="font-medium text-green-500">
+                            {question.correctAnswer}
+                          </span>
+                        </div>
+                      )}
+                    </div>
+                  ) : (
+                    <div className="flex gap-2">
+                      <Input
+                        value={
+                          selectedAnswer !== undefined
+                            ? selectedAnswer
+                            : studentInput
                         }
-                      }}
-                      className="h-12 text-base"
-                    />
-                    {!isAnswered && (
-                      <Button
-                        onClick={handleSubmitStudentProduced}
-                        disabled={!studentInput.trim()}
-                        className="h-12 px-6"
-                      >
-                        Submit
-                      </Button>
-                    )}
+                        onChange={(e) => setStudentInput(e.target.value)}
+                        placeholder="Type your answer..."
+                        disabled={
+                          showExplanationImmediately && isAnswered
+                        }
+                        onKeyDown={(e) => {
+                          if (e.key === "Enter") {
+                            handleSubmitStudentProduced();
+                          }
+                        }}
+                        className="h-12 text-base"
+                      />
+                      {!isAnswered && (
+                        <Button
+                          onClick={handleSubmitStudentProduced}
+                          disabled={!studentInput.trim()}
+                          className="h-12 px-6"
+                        >
+                          Submit
+                        </Button>
+                      )}
+                    </div>
+                  )}
+                </div>
+              )}
+
+              {/* Help Me button — visible before answering */}
+              {!showFeedback && !aiHelpOpen && (
+                <div className="flex justify-end">
+                  <Button
+                    variant="ghost"
+                    size="sm"
+                    className="h-8 text-xs text-muted-foreground hover:text-foreground"
+                    onClick={handleOpenAiHelp}
+                  >
+                    <HelpCircle className="mr-1.5 h-3.5 w-3.5" />
+                    Help Me
+                  </Button>
+                </div>
+              )}
+
+              {/* Explanation callout */}
+              {showExplanationImmediately && showFeedback && (
+                <div className="rounded-lg border border-blue-500/30 bg-blue-500/5 p-4 text-sm leading-relaxed dark:bg-blue-500/10">
+                  <p className="mb-1 font-semibold text-blue-600 dark:text-blue-400">
+                    Explanation
+                  </p>
+                  {question.explanation}
+                </div>
+              )}
+
+              {/* Get AI Help button — shown after wrong answer */}
+              {showExplanationImmediately &&
+                showFeedback &&
+                !isCorrect &&
+                !aiHelpOpen && (
+                  <div className="flex justify-center">
+                    <Button
+                      variant="outline"
+                      size="sm"
+                      className="h-8 text-xs"
+                      onClick={handleOpenAiHelp}
+                    >
+                      <Sparkles className="mr-1.5 h-3.5 w-3.5" />
+                      Get AI Help
+                    </Button>
                   </div>
                 )}
-              </div>
-            )}
 
-            {/* Explanation callout */}
-            {showExplanationImmediately && showFeedback && (
-              <div className="rounded-lg border border-blue-500/30 bg-blue-500/5 p-4 text-sm leading-relaxed dark:bg-blue-500/10">
-                <p className="mb-1 font-semibold text-blue-600 dark:text-blue-400">
-                  Explanation
-                </p>
-                {question.explanation}
-              </div>
-            )}
-          </CardContent>
-        </Card>
+              {/* Inline AI Help panel */}
+              <InlineHelp
+                question={question.text}
+                studentAnswer={
+                  isAnswered && !isCorrect ? selectedAnswer : undefined
+                }
+                correctAnswer={question.correctAnswer}
+                skillId={question.skillId}
+                isOpen={aiHelpOpen}
+                onClose={handleCloseAiHelp}
+              />
+            </CardContent>
+          </Card>
+        )}
       </div>
 
       {/* Navigation */}

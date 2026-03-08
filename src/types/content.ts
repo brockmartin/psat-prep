@@ -1,5 +1,5 @@
 export type Difficulty = 1 | 2 | 3;
-export type QuestionType = 'multiple_choice' | 'student_produced';
+export type QuestionType = 'multiple_choice' | 'student_produced' | 'step_by_step' | 'fix_mistake';
 export type Domain = 'algebra' | 'advanced_math' | 'problem_solving' | 'geometry';
 export type ItemStatus = 'not_started' | 'in_progress' | 'completed';
 
@@ -12,6 +12,12 @@ export interface Question {
   explanation: string;
   difficulty: Difficulty;
   domain: Domain;
+  skillId?: string;
+  /** Step-by-step solver data (used when type === 'step_by_step') */
+  steps?: { instruction: string; answer: string; hint?: string }[];
+  /** Fix-the-mistake data (used when type === 'fix_mistake') */
+  wrongSolution?: { step: string; isError: boolean }[];
+  errorExplanation?: string;
 }
 
 export interface Topic {

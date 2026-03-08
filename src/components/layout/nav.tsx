@@ -17,6 +17,7 @@ import { useAuth } from "@/hooks/use-auth"
 const navLinks = [
   { href: "/dashboard", label: "Dashboard" },
   { href: "/week", label: "Lessons" },
+  { href: "/practice", label: "Practice" },
   { href: "/practice-test", label: "Practice Tests" },
 ] as const
 

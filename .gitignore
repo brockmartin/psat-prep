@@ -39,3 +39,6 @@ yarn-error.log*
 # typescript
 *.tsbuildinfo
 next-env.d.ts
+
+# service account credentials
+fxei-meta-project-1ff8903ced02.json

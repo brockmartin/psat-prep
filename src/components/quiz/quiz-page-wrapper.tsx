@@ -10,6 +10,8 @@ import type { QuizResult } from "@/components/quiz/quiz-engine";
 import type { Question, Domain } from "@/types/content";
 import { useAuth } from "@/hooks/use-auth";
 import { saveQuizResult } from "@/lib/progress";
+import { batchUpdateMastery } from "@/lib/student-profile";
+import { getSkillForQuestion } from "@/lib/skills";
 
 const DOMAIN_LABELS: Record<Domain, string> = {
   algebra: "Algebra",
@@ -55,6 +57,27 @@ export function QuizPageWrapper({
         results.correctCount,
         results.totalQuestions
       )
+    }
+
+    // Update skill mastery for all answered questions (fire-and-forget)
+    if (user) {
+      const masteryUpdates = results.responses
+        .map((r) => {
+          const skillId = getSkillForQuestion(r.questionId);
+          if (!skillId) return null;
+          return {
+            skillId,
+            isCorrect: r.isCorrect,
+            answer: r.selectedAnswer || undefined,
+          };
+        })
+        .filter((u): u is { skillId: string; isCorrect: boolean; answer: string | undefined } => u !== null);
+
+      if (masteryUpdates.length > 0) {
+        batchUpdateMastery(user.id, masteryUpdates).catch((err) => {
+          console.warn("[QuizPageWrapper] Failed to update skill mastery:", err);
+        });
+      }
     }
   }
 

@@ -2,26 +2,38 @@
 
 import { useEffect, useState } from "react"
 import Link from "next/link"
+import { useRouter } from "next/navigation"
 import {
   ArrowRight,
   Brain,
+  ChevronDown,
+  ChevronUp,
   FileText,
   Flame,
   HelpCircle,
   Lightbulb,
+  Map,
   Target,
   TrendingUp,
+  Zap,
 } from "lucide-react"
+import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Badge } from "@/components/ui/badge"
 import { ProgressRing } from "@/components/dashboard/progress-ring"
 import { StatCard } from "@/components/dashboard/stat-card"
 import { WeekCard } from "@/components/dashboard/week-card"
+import { ReviewDueCard } from "@/components/dashboard/review-due-card"
+import { SmartRecommendations } from "@/components/dashboard/smart-recommendations"
+import { AIInsights } from "@/components/dashboard/ai-insights"
+import { SkillMasteryMap } from "@/components/dashboard/skill-mastery-map"
 import { Skeleton } from "@/components/ui/skeleton"
 import { getWeeks } from "@/lib/content"
 import { getMockProgress } from "@/lib/mock-progress"
 import { getDashboardProgress } from "@/lib/progress"
 import { useAuth } from "@/hooks/use-auth"
+import { hasCompletedOnboarding } from "@/lib/student-profile"
+import { applyMasteryDecay } from "@/lib/spaced-repetition"
 import type { MockProgress } from "@/lib/mock-progress"
 import type { Week } from "@/types/content"
 
@@ -54,9 +66,33 @@ function DashboardSkeleton() {
 
 export function DashboardContent() {
   const { user, loading: authLoading } = useAuth()
+  const router = useRouter()
   const [progress, setProgress] = useState<MockProgress | null>(null)
   const [dataLoading, setDataLoading] = useState(true)
+  const [showSkillMap, setShowSkillMap] = useState(false)
   const weeks: Week[] = getWeeks()
+
+  // Redirect to onboarding if user hasn't completed it yet
+  useEffect(() => {
+    if (authLoading || !user) return
+
+    async function checkOnboarding() {
+      const completed = await hasCompletedOnboarding(user!.id)
+      if (!completed) {
+        router.replace("/onboarding")
+      }
+    }
+
+    checkOnboarding()
+  }, [user, authLoading, router])
+
+  // Fire-and-forget: apply mastery decay on dashboard load
+  useEffect(() => {
+    if (authLoading || !user) return
+    applyMasteryDecay(user.id).catch(() => {
+      // Silently ignore — decay is best-effort
+    })
+  }, [user, authLoading])
 
   useEffect(() => {
     async function loadProgress() {
@@ -128,6 +164,12 @@ export function DashboardContent() {
         </Card>
       </Link>
 
+      {/* Review Due */}
+      <ReviewDueCard />
+
+      {/* Smart Recommendations */}
+      <SmartRecommendations />
+
       {/* Stats Row */}
       <div className="grid grid-cols-2 gap-4 lg:grid-cols-4">
         <Card>
@@ -195,6 +237,9 @@ export function DashboardContent() {
         </div>
       </section>
 
+      {/* AI Insights */}
+      <AIInsights />
+
       {/* Quick Actions */}
       <section>
         <div className="mb-4 flex items-center gap-2">
@@ -203,7 +248,26 @@ export function DashboardContent() {
             Quick Actions
           </h2>
         </div>
-        <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
+        <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-5">
+          {/* Adaptive Practice */}
+          <Link href="/practice" className="group block">
+            <Card className="h-full transition-all duration-200 group-hover:ring-2 group-hover:ring-primary/30 group-hover:shadow-md">
+              <CardHeader>
+                <div className="flex items-center gap-3">
+                  <div className="flex h-10 w-10 items-center justify-center rounded-lg bg-emerald-500/15">
+                    <Zap className="h-5 w-5 text-emerald-600 dark:text-emerald-400" />
+                  </div>
+                  <CardTitle>Adaptive Practice</CardTitle>
+                </div>
+              </CardHeader>
+              <CardContent>
+                <p className="text-sm text-muted-foreground">
+                  AI-powered practice that adapts to your skill level
+                </p>
+              </CardContent>
+            </Card>
+          </Link>
+
           {/* Diagnostic Test */}
           <Link href="/diagnostic" className="group block">
             <Card className="h-full transition-all duration-200 group-hover:ring-2 group-hover:ring-primary/30 group-hover:shadow-md">
@@ -328,6 +392,26 @@ export function DashboardContent() {
             </Card>
           </Link>
         </div>
+      </section>
+
+      {/* Skill Mastery Map (collapsible) */}
+      <section>
+        <Button
+          variant="outline"
+          className="mb-4 w-full justify-between"
+          onClick={() => setShowSkillMap((prev) => !prev)}
+        >
+          <span className="flex items-center gap-2">
+            <Map className="h-4 w-4" />
+            View All Skills
+          </span>
+          {showSkillMap ? (
+            <ChevronUp className="h-4 w-4" />
+          ) : (
+            <ChevronDown className="h-4 w-4" />
+          )}
+        </Button>
+        {showSkillMap && <SkillMasteryMap />}
       </section>
     </div>
   )
