@@ -2,7 +2,7 @@
 
 import { useState } from "react"
 import Link from "next/link"
-import { Menu, LogOut } from "lucide-react"
+import { Menu, LogOut, GraduationCap } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import {
   Sheet,
@@ -25,27 +25,30 @@ export function Nav() {
   const { user, loading, signOut } = useAuth()
 
   return (
-    <header className="sticky top-0 z-50 w-full border-b border-border/40 bg-background/80 backdrop-blur-sm">
-      <div className="mx-auto flex h-14 max-w-7xl items-center justify-between px-4 sm:px-6 lg:px-8">
+    <header className="sticky top-0 z-50 w-full border-b border-border/40 bg-background/80 backdrop-blur-md">
+      <div className="mx-auto flex h-16 max-w-7xl items-center justify-between px-4 sm:px-6 lg:px-8">
         {/* Logo */}
         <Link
           href="/"
-          className="text-lg font-bold tracking-tight text-foreground transition-colors hover:text-foreground/80"
+          className="flex items-center gap-2.5 text-lg font-bold tracking-tight text-foreground transition-colors hover:text-primary"
         >
+          <div className="flex size-8 items-center justify-center rounded-lg bg-primary text-primary-foreground">
+            <GraduationCap className="size-4.5" />
+          </div>
           PSAT Prep
         </Link>
 
         {/* Desktop nav */}
         <nav className="hidden items-center gap-1 md:flex">
           {navLinks.map((link) => (
-            <Button key={link.href} variant="ghost" size="sm" asChild>
+            <Button key={link.href} variant="ghost" size="sm" className="text-muted-foreground hover:text-foreground" asChild>
               <Link href={link.href}>{link.label}</Link>
             </Button>
           ))}
         </nav>
 
         {/* Desktop right side */}
-        <div className="hidden items-center gap-2 md:flex">
+        <div className="hidden items-center gap-3 md:flex">
           <ThemeToggle />
           {!loading && (
             <>
@@ -54,8 +57,8 @@ export function Nav() {
                   <span className="max-w-[180px] truncate text-sm text-muted-foreground">
                     {user.email}
                   </span>
-                  <Button variant="ghost" size="sm" onClick={signOut}>
-                    <LogOut className="mr-1 size-4" />
+                  <Button variant="ghost" size="sm" onClick={signOut} className="text-muted-foreground hover:text-foreground">
+                    <LogOut className="mr-1.5 size-4" />
                     Log Out
                   </Button>
                 </>
@@ -64,7 +67,7 @@ export function Nav() {
                   <Button variant="ghost" size="sm" asChild>
                     <Link href="/login">Log In</Link>
                   </Button>
-                  <Button size="sm" asChild>
+                  <Button size="sm" className="shadow-sm shadow-primary/20" asChild>
                     <Link href="/signup">Sign Up</Link>
                   </Button>
                 </>
@@ -90,9 +93,14 @@ export function Nav() {
         <Sheet open={open} onOpenChange={setOpen}>
           <SheetContent side="right" className="w-72">
             <SheetHeader>
-              <SheetTitle>PSAT Prep</SheetTitle>
+              <SheetTitle className="flex items-center gap-2">
+                <div className="flex size-7 items-center justify-center rounded-lg bg-primary text-primary-foreground">
+                  <GraduationCap className="size-4" />
+                </div>
+                PSAT Prep
+              </SheetTitle>
             </SheetHeader>
-            <nav className="flex flex-col gap-1 px-4">
+            <nav className="flex flex-col gap-1 px-4 pt-4">
               {navLinks.map((link) => (
                 <SheetClose key={link.href} asChild>
                   <Button variant="ghost" className="justify-start" asChild>
@@ -110,10 +118,7 @@ export function Nav() {
                         {user.email}
                       </p>
                       <SheetClose asChild>
-                        <Button
-                          variant="outline"
-                          onClick={signOut}
-                        >
+                        <Button variant="outline" onClick={signOut}>
                           <LogOut className="mr-2 size-4" />
                           Log Out
                         </Button>
@@ -127,7 +132,7 @@ export function Nav() {
                         </Button>
                       </SheetClose>
                       <SheetClose asChild>
-                        <Button asChild>
+                        <Button className="shadow-sm shadow-primary/20" asChild>
                           <Link href="/signup">Sign Up</Link>
                         </Button>
                       </SheetClose>

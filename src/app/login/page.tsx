@@ -3,7 +3,7 @@
 import { useState, type FormEvent } from "react"
 import Link from "next/link"
 import { useRouter } from "next/navigation"
-import { Loader2 } from "lucide-react"
+import { Loader2, BookOpen } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import {
   Card,
@@ -66,18 +66,26 @@ export default function LoginPage() {
   }
 
   return (
-    <div className="flex min-h-[60vh] items-center justify-center">
-      <Card className="w-full max-w-md">
-        <CardHeader className="text-center">
+    <div className="flex min-h-[70vh] items-center justify-center px-4">
+      {/* Background glow */}
+      <div className="pointer-events-none fixed inset-0 flex items-center justify-center">
+        <div className="h-[400px] w-[600px] rounded-full bg-primary/5 blur-3xl" />
+      </div>
+
+      <Card className="relative w-full max-w-md border-border/60 shadow-xl shadow-black/5">
+        <CardHeader className="text-center pb-2">
+          <div className="mx-auto mb-4 flex size-14 items-center justify-center rounded-2xl bg-primary/10">
+            <BookOpen className="size-7 text-primary" />
+          </div>
           <CardTitle className="text-2xl font-bold tracking-tight">
             Welcome back
           </CardTitle>
-          <CardDescription>
+          <CardDescription className="text-base">
             Log in to continue your PSAT prep
           </CardDescription>
         </CardHeader>
 
-        <CardContent>
+        <CardContent className="pt-4">
           <form onSubmit={handleSubmit} className="flex flex-col gap-4">
             <div className="flex flex-col gap-2">
               <Label htmlFor="email">Email</Label>
@@ -89,6 +97,7 @@ export default function LoginPage() {
                 onChange={(e) => setEmail(e.target.value)}
                 autoComplete="email"
                 disabled={loading}
+                className="h-11"
               />
             </div>
 
@@ -102,14 +111,19 @@ export default function LoginPage() {
                 onChange={(e) => setPassword(e.target.value)}
                 autoComplete="current-password"
                 disabled={loading}
+                className="h-11"
               />
             </div>
 
             {error && (
-              <p className="text-sm font-medium text-destructive">{error}</p>
+              <p className="rounded-lg bg-destructive/10 p-3 text-sm font-medium text-destructive">{error}</p>
             )}
 
-            <Button type="submit" className="w-full" disabled={loading}>
+            <Button
+              type="submit"
+              className="mt-1 h-11 w-full text-base font-semibold shadow-md shadow-primary/20 transition-all hover:shadow-lg hover:shadow-primary/25"
+              disabled={loading}
+            >
               {loading ? (
                 <>
                   <Loader2 className="mr-2 size-4 animate-spin" />
@@ -122,12 +136,12 @@ export default function LoginPage() {
           </form>
         </CardContent>
 
-        <CardFooter className="justify-center">
+        <CardFooter className="justify-center pt-2">
           <p className="text-sm text-muted-foreground">
             Don&apos;t have an account?{" "}
             <Link
               href="/signup"
-              className="font-medium text-foreground underline underline-offset-4 transition-colors hover:text-foreground/80"
+              className="font-semibold text-primary transition-colors hover:text-primary/80"
             >
               Sign up
             </Link>
