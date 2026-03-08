@@ -3,7 +3,7 @@
 import { useState, type FormEvent } from "react"
 import Link from "next/link"
 import { useRouter } from "next/navigation"
-import { Loader2, Rocket } from "lucide-react"
+import { Loader2, Rocket, Mail, CheckCircle } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import {
   Card,
@@ -23,6 +23,7 @@ export default function SignupPage() {
   const [confirmPassword, setConfirmPassword] = useState("")
   const [error, setError] = useState<string | null>(null)
   const [loading, setLoading] = useState(false)
+  const [confirmationSent, setConfirmationSent] = useState(false)
   const router = useRouter()
 
   function validate(): string | null {
@@ -52,9 +53,13 @@ export default function SignupPage() {
         setError("Authentication is not configured.")
         return
       }
-      const { error: signUpError } = await supabase.auth.signUp({
+
+      const { data, error: signUpError } = await supabase.auth.signUp({
         email,
         password,
+        options: {
+          emailRedirectTo: `${window.location.origin}/auth/callback`,
+        },
       })
 
       if (signUpError) {
@@ -62,8 +67,15 @@ export default function SignupPage() {
         return
       }
 
-      router.push("/dashboard")
-      router.refresh()
+      // If user session exists immediately, email confirmation is disabled — go straight to dashboard
+      if (data.session) {
+        router.push("/dashboard")
+        router.refresh()
+        return
+      }
+
+      // Otherwise, email confirmation is required — show the confirmation screen
+      setConfirmationSent(true)
     } catch {
       setError("Something went wrong. Please try again.")
     } finally {
@@ -71,9 +83,81 @@ export default function SignupPage() {
     }
   }
 
+  // Confirmation sent screen
+  if (confirmationSent) {
+    return (
+      <div className="flex min-h-[70vh] items-center justify-center px-4">
+        <div className="pointer-events-none fixed inset-0 flex items-center justify-center">
+          <div className="h-[400px] w-[600px] rounded-full bg-primary/5 blur-3xl" />
+        </div>
+
+        <Card className="relative w-full max-w-md border-border/60 shadow-xl shadow-black/5">
+          <CardHeader className="text-center pb-2">
+            <div className="mx-auto mb-4 flex size-14 items-center justify-center rounded-2xl bg-emerald-500/10">
+              <Mail className="size-7 text-emerald-500" />
+            </div>
+            <CardTitle className="text-2xl font-bold tracking-tight">
+              Check your email
+            </CardTitle>
+            <CardDescription className="text-base">
+              We sent a confirmation link to
+            </CardDescription>
+          </CardHeader>
+
+          <CardContent className="text-center">
+            <p className="rounded-lg bg-muted p-3 font-medium text-foreground">
+              {email}
+            </p>
+
+            <div className="mt-6 space-y-3 text-left">
+              <div className="flex items-start gap-3">
+                <CheckCircle className="mt-0.5 size-4 shrink-0 text-emerald-500" />
+                <p className="text-sm text-muted-foreground">
+                  Click the link in the email to confirm your account
+                </p>
+              </div>
+              <div className="flex items-start gap-3">
+                <CheckCircle className="mt-0.5 size-4 shrink-0 text-emerald-500" />
+                <p className="text-sm text-muted-foreground">
+                  After confirming, you&apos;ll be redirected to your dashboard
+                </p>
+              </div>
+              <div className="flex items-start gap-3">
+                <CheckCircle className="mt-0.5 size-4 shrink-0 text-emerald-500" />
+                <p className="text-sm text-muted-foreground">
+                  Check your spam folder if you don&apos;t see it within a few minutes
+                </p>
+              </div>
+            </div>
+
+            <div className="mt-8 flex flex-col gap-3">
+              <Button variant="outline" className="w-full" asChild>
+                <Link href="/login">
+                  Go to Log In
+                </Link>
+              </Button>
+              <Button
+                variant="ghost"
+                className="w-full text-muted-foreground"
+                onClick={() => {
+                  setConfirmationSent(false)
+                  setEmail("")
+                  setPassword("")
+                  setConfirmPassword("")
+                }}
+              >
+                Use a different email
+              </Button>
+            </div>
+          </CardContent>
+        </Card>
+      </div>
+    )
+  }
+
+  // Signup form
   return (
     <div className="flex min-h-[70vh] items-center justify-center px-4">
-      {/* Background glow */}
       <div className="pointer-events-none fixed inset-0 flex items-center justify-center">
         <div className="h-[400px] w-[600px] rounded-full bg-primary/5 blur-3xl" />
       </div>

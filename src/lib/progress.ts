@@ -42,7 +42,7 @@ export async function saveQuizResult(
         score,
         completed_at: new Date().toISOString(),
       },
-      { onConflict: "user_id,item_id" }
+      { onConflict: "user_id,item_type,item_id" }
     )
 
     // Insert individual quiz responses
@@ -80,7 +80,7 @@ export async function saveLessonProgress(
         status,
         completed_at: status === "completed" ? new Date().toISOString() : null,
       },
-      { onConflict: "user_id,item_id" }
+      { onConflict: "user_id,item_type,item_id" }
     )
   } catch (error) {
     console.warn("[progress] Failed to save lesson progress:", error)
@@ -106,7 +106,7 @@ export async function saveDiagnosticResult(
         score,
         completed_at: new Date().toISOString(),
       },
-      { onConflict: "user_id,item_id" }
+      { onConflict: "user_id,item_type,item_id" }
     )
 
     // Insert individual quiz responses for diagnostic
@@ -168,7 +168,7 @@ export async function savePracticeTestResult(
         score: totalScore,
         completed_at: new Date().toISOString(),
       },
-      { onConflict: "user_id,item_id" }
+      { onConflict: "user_id,item_type,item_id" }
     )
   } catch (error) {
     console.warn("[progress] Failed to save practice test result:", error)

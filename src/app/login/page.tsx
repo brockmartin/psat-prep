@@ -52,7 +52,13 @@ export default function LoginPage() {
       })
 
       if (signInError) {
-        setError(signInError.message)
+        if (signInError.message.toLowerCase().includes("email not confirmed")) {
+          setError("Your email hasn't been confirmed yet. Please check your inbox and click the confirmation link.")
+        } else if (signInError.message === "Invalid login credentials") {
+          setError("Incorrect email or password. Please try again.")
+        } else {
+          setError(signInError.message)
+        }
         return
       }
 
