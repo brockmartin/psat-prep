@@ -98,7 +98,7 @@ export async function createProfile(
   }
 }
 
-/** Partially update a student profile. Returns the updated row. */
+/** Partially update a student profile. Creates it if it doesn't exist. Returns the updated row. */
 export async function updateProfile(
   userId: string,
   data: Partial<StudentProfile>,
@@ -109,10 +109,13 @@ export async function updateProfile(
     // Strip fields that should never be overwritten via this helper.
     const { id: _id, user_id: _uid, created_at: _ca, ...updates } = data
 
+    // Use upsert to handle the case where the profile doesn't exist yet
     const { data: updated, error } = await supabase
       .from('student_profiles')
-      .update(updates)
-      .eq('user_id', userId)
+      .upsert(
+        { user_id: userId, ...updates },
+        { onConflict: 'user_id' }
+      )
       .select('*')
       .single()
 
