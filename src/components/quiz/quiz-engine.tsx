@@ -21,11 +21,17 @@ import {
 import { InlineHelp } from "@/components/quiz/inline-help";
 import { StepByStepSolver } from "@/components/quiz/step-by-step-solver";
 import { FixTheMistake } from "@/components/quiz/fix-the-mistake";
+import { BehaviorNudge } from "@/components/quiz/behavior-nudge";
+import type { NudgeAction } from "@/components/quiz/behavior-nudge";
 import type { Question, Domain } from "@/types/content";
 import { cn } from "@/lib/utils";
 import { useSession } from "@/contexts/session-context";
 import { useAuth } from "@/hooks/use-auth";
 import { getSkillForQuestion } from "@/lib/skills";
+import {
+  createBehaviorTracker,
+  type BehaviorSignals,
+} from "@/lib/behavior-tracker";
 
 // ---------------------------------------------------------------------------
 // Types
@@ -123,11 +129,26 @@ export function QuizEngine({
   const questionStartTimeRef = useRef(Date.now());
   const [timeRemaining, setTimeRemaining] = useState(timeLimitSeconds ?? 0);
 
+  // Behavior tracking
+  const behaviorTrackerRef = useRef(createBehaviorTracker());
+  const [behaviorSignals, setBehaviorSignals] = useState<BehaviorSignals>(
+    behaviorTrackerRef.current.getSignals()
+  );
+
   // --- Derived -------------------------------------------------------------
   const question = questions[currentIndex];
   const totalQuestions = questions.length;
   const progressPercent = ((currentIndex + 1) / totalQuestions) * 100;
   const selectedAnswer = question ? responses[question.id] : undefined;
+
+  // --- Behavior signal polling (lightweight, no API calls) ----------------
+  useEffect(() => {
+    if (isComplete) return;
+    const interval = setInterval(() => {
+      setBehaviorSignals(behaviorTrackerRef.current.getSignals());
+    }, 5000); // Refresh every 5s for time-based nudges
+    return () => clearInterval(interval);
+  }, [isComplete]);
 
   // --- Timer ---------------------------------------------------------------
   useEffect(() => {
@@ -178,6 +199,7 @@ export function QuizEngine({
     if (!user || !sessionId) return;
     const timeSpent = Math.round((Date.now() - questionStartTimeRef.current) / 1000);
     const skillId = q.skillId ?? getSkillForQuestion(q.id);
+    const answerChanges = behaviorTrackerRef.current.getCurrentAnswerChanges();
     logInteraction({
       userId: user.id,
       questionId: q.id,
@@ -189,6 +211,8 @@ export function QuizEngine({
       hintUsed: false,
       aiHelpUsed: aiHelpUsedMap[q.id] ?? false,
       difficultyLevel: q.difficulty,
+      timeToFirstAction: timeSpent,
+      answerChanges,
     });
   }
 
@@ -202,10 +226,25 @@ export function QuizEngine({
 
   function handleSelectAnswer(answer: string) {
     if (showExplanationImmediately && showFeedback) return; // already answered
+
+    // Track answer changes (when student picks a different option before submitting)
+    const previousAnswer = responses[question.id];
+    if (previousAnswer !== undefined && previousAnswer !== answer) {
+      behaviorTrackerRef.current.recordAnswerChange();
+    }
+
     setResponses((prev) => ({ ...prev, [question.id]: answer }));
-    logAnswer(question, answer);
+
     if (showExplanationImmediately) {
+      // In immediate-feedback mode, this IS the submission
+      const isCorrect = answer === question.correctAnswer;
+      behaviorTrackerRef.current.recordAnswer(isCorrect);
+      setBehaviorSignals(behaviorTrackerRef.current.getSignals());
+      logAnswer(question, answer);
       setShowFeedback(true);
+    } else {
+      // Practice-test mode: just selecting, not submitting yet
+      logAnswer(question, answer);
     }
   }
 
@@ -213,7 +252,12 @@ export function QuizEngine({
     if (!studentInput.trim()) return;
     const answer = studentInput.trim();
     setResponses((prev) => ({ ...prev, [question.id]: answer }));
+
+    const isCorrect = answer === question.correctAnswer;
+    behaviorTrackerRef.current.recordAnswer(isCorrect);
+    setBehaviorSignals(behaviorTrackerRef.current.getSignals());
     logAnswer(question, answer);
+
     if (showExplanationImmediately) {
       setShowFeedback(true);
     }
@@ -235,6 +279,8 @@ export function QuizEngine({
         setStudentInput("");
         setAiHelpOpen(false);
         questionStartTimeRef.current = Date.now();
+        behaviorTrackerRef.current.startQuestion();
+        setBehaviorSignals(behaviorTrackerRef.current.getSignals());
       });
     } else {
       handleFinish();
@@ -249,7 +295,28 @@ export function QuizEngine({
         setStudentInput("");
         setAiHelpOpen(false);
         questionStartTimeRef.current = Date.now();
+        behaviorTrackerRef.current.startQuestion();
+        setBehaviorSignals(behaviorTrackerRef.current.getSignals());
       });
+    }
+  }
+
+  function handleNudgeAction(action: NudgeAction) {
+    switch (action) {
+      case "hint":
+        handleOpenAiHelp();
+        break;
+      case "watch_video":
+      case "try_easier":
+      case "switch_topic":
+        // These could navigate elsewhere; for now open AI help with context
+        handleOpenAiHelp();
+        break;
+      case "keep_going":
+      case "take_break":
+      case "dismiss":
+        // No-op; nudge is already dismissed by the component
+        break;
     }
   }
 
@@ -793,6 +860,17 @@ export function QuizEngine({
           </Card>
         )}
       </div>
+
+      {/* Behavior nudge — contextual intervention */}
+      {!showFeedback && (
+        <BehaviorNudge
+          consecutiveWrong={behaviorSignals.consecutiveWrong}
+          timeOnQuestion={behaviorSignals.timeOnCurrentQuestion}
+          sessionWrongCount={behaviorSignals.sessionWrongCount}
+          velocity={behaviorSignals.sessionVelocity}
+          onAction={handleNudgeAction}
+        />
+      )}
 
       {/* Navigation */}
       <div className="flex items-center justify-between">

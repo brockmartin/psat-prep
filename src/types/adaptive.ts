@@ -8,8 +8,46 @@ export interface StudentProfile {
   session_count: number
   total_time_minutes: number
   onboarding_complete: boolean
+  parent_email: string | null
+  current_streak: number
+  longest_streak: number
+  last_study_date: string | null
   last_active_at: string
   created_at: string
+}
+
+export interface WeeklyReportData {
+  weekStart: string
+  weekEnd: string
+  questionsAnswered: number
+  accuracy: number
+  timeSpentMinutes: number
+  daysStudied: number
+  currentStreak: number
+  skillsImproved: { skillName: string; improvement: number }[]
+  skillsStruggling: { skillName: string; mastery: number }[]
+  scorePrediction: { low: number; mid: number; high: number }
+  scoreDelta: number
+  aiSummary: string
+  aiRecommendations: string[]
+  wins: string[]
+}
+
+export interface ParentDigestData {
+  studentEmail: string
+  parentEmail: string
+  weekStart: string
+  weekEnd: string
+  daysStudied: number
+  currentStreak: number
+  questionsAnswered: number
+  accuracy: number
+  timeSpentMinutes: number
+  scorePrediction: { low: number; mid: number; high: number }
+  scoreDelta: number
+  strongestDomain: string
+  weakestDomain: string
+  aiObservations: string[]
 }
 
 export interface SkillMastery {

@@ -16,6 +16,8 @@ import {
   Eye,
   X,
 } from "lucide-react"
+import { VoiceInput } from "@/components/chat/voice-input"
+import { VoiceOutput } from "@/components/chat/voice-output"
 import { useAITutor } from "@/hooks/use-ai-tutor"
 import { useAuth } from "@/hooks/use-auth"
 import { getInlineHelpPrompt } from "@/lib/ai/system-prompts"
@@ -140,6 +142,10 @@ export function InlineHelp({
     void streamMessage(trimmed)
   }
 
+  function handleVoiceTranscript(text: string) {
+    setUserInput(text)
+  }
+
   function handleStillStuck() {
     void streamMessage(
       "I'm still stuck. Can you try explaining it a different way or give me a simpler example?"
@@ -227,6 +233,12 @@ export function InlineHelp({
                           </div>
                         )}
                       </div>
+                      {/* Voice output button on assistant messages */}
+                      {!isUser && msg.content && (
+                        <div className="ml-1 flex items-end">
+                          <VoiceOutput text={msg.content} size="sm" />
+                        </div>
+                      )}
                     </div>
                   )
                 })}
@@ -268,6 +280,11 @@ export function InlineHelp({
                   }
                 }}
                 className="h-9 text-sm"
+              />
+              <VoiceInput
+                onTranscript={handleVoiceTranscript}
+                disabled={isLoading}
+                size="sm"
               />
               <Button
                 size="icon"

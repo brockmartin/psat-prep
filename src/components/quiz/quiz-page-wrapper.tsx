@@ -12,6 +12,7 @@ import { useAuth } from "@/hooks/use-auth";
 import { saveQuizResult } from "@/lib/progress";
 import { batchUpdateMastery } from "@/lib/student-profile";
 import { getSkillForQuestion } from "@/lib/skills";
+import { updateStreak } from "@/lib/streaks";
 
 const DOMAIN_LABELS: Record<Domain, string> = {
   algebra: "Algebra",
@@ -78,6 +79,18 @@ export function QuizPageWrapper({
           console.warn("[QuizPageWrapper] Failed to update skill mastery:", err);
         });
       }
+
+      // Update study streak (fire-and-forget, idempotent)
+      updateStreak(user.id)
+        .then((result) => {
+          // Dispatch custom event so StreakBadge can update without a page refresh
+          window.dispatchEvent(
+            new CustomEvent("streak-updated", { detail: result }),
+          );
+        })
+        .catch((err) => {
+          console.warn("[QuizPageWrapper] Failed to update streak:", err);
+        });
     }
   }
 

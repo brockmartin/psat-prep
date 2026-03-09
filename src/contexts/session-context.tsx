@@ -20,6 +20,8 @@ interface SessionContextValue {
     hintUsed: boolean
     aiHelpUsed: boolean
     difficultyLevel?: number
+    timeToFirstAction?: number
+    answerChanges?: number
   }) => void
 }
 

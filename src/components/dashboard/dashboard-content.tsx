@@ -5,6 +5,7 @@ import Link from "next/link"
 import { useRouter } from "next/navigation"
 import {
   ArrowRight,
+  BarChart3,
   Brain,
   ChevronDown,
   ChevronUp,
@@ -27,6 +28,7 @@ import { ReviewDueCard } from "@/components/dashboard/review-due-card"
 import { SmartRecommendations } from "@/components/dashboard/smart-recommendations"
 import { AIInsights } from "@/components/dashboard/ai-insights"
 import { SkillMasteryMap } from "@/components/dashboard/skill-mastery-map"
+import { ScorePredictionCard } from "@/components/dashboard/score-prediction-card"
 import { Skeleton } from "@/components/ui/skeleton"
 import { getWeeks } from "@/lib/content"
 import { getMockProgress } from "@/lib/mock-progress"
@@ -34,8 +36,11 @@ import { getDashboardProgress } from "@/lib/progress"
 import { useAuth } from "@/hooks/use-auth"
 import { hasCompletedOnboarding } from "@/lib/student-profile"
 import { applyMasteryDecay } from "@/lib/spaced-repetition"
+import { checkAndCreateNotifications } from "@/lib/notification-triggers"
+import { getLatestReport } from "@/lib/weekly-report-client"
 import type { MockProgress } from "@/lib/mock-progress"
 import type { Week } from "@/types/content"
+import type { WeeklyReportData } from "@/types/adaptive"
 
 function DashboardSkeleton() {
   return (
@@ -70,6 +75,7 @@ export function DashboardContent() {
   const [progress, setProgress] = useState<MockProgress | null>(null)
   const [dataLoading, setDataLoading] = useState(true)
   const [showSkillMap, setShowSkillMap] = useState(false)
+  const [latestReport, setLatestReport] = useState<WeeklyReportData | null>(null)
   const weeks: Week[] = getWeeks()
 
   // Redirect to onboarding if user hasn't completed it yet
@@ -92,6 +98,10 @@ export function DashboardContent() {
     applyMasteryDecay(user.id).catch(() => {
       // Silently ignore — decay is best-effort
     })
+    // Check and create notifications (idempotent, max 1 per type per day)
+    checkAndCreateNotifications(user.id).catch(() => {
+      // Silently ignore — notification triggers are best-effort
+    })
   }, [user, authLoading])
 
   useEffect(() => {
@@ -100,8 +110,12 @@ export function DashboardContent() {
 
       if (user) {
         try {
-          const data = await getDashboardProgress(user.id)
+          const [data, report] = await Promise.all([
+            getDashboardProgress(user.id),
+            getLatestReport(user.id).catch(() => null),
+          ])
           setProgress(data)
+          setLatestReport(report)
         } catch {
           // Fallback to mock data
           setProgress(getMockProgress())
@@ -209,6 +223,9 @@ export function DashboardContent() {
         />
       </div>
 
+      {/* Score Prediction */}
+      <ScorePredictionCard />
+
       {/* 6-Week Roadmap */}
       <section>
         <div className="mb-4 flex items-center gap-2">
@@ -248,7 +265,32 @@ export function DashboardContent() {
             Quick Actions
           </h2>
         </div>
-        <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-5">
+        <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
+          {/* Weekly Report */}
+          <Link href="/reports" className="group block">
+            <Card className="h-full transition-all duration-200 group-hover:ring-2 group-hover:ring-primary/30 group-hover:shadow-md">
+              <CardHeader>
+                <div className="flex items-center gap-3">
+                  <div className="flex h-10 w-10 items-center justify-center rounded-lg bg-indigo-500/15">
+                    <BarChart3 className="h-5 w-5 text-indigo-600 dark:text-indigo-400" />
+                  </div>
+                  <CardTitle>Weekly Report</CardTitle>
+                </div>
+              </CardHeader>
+              <CardContent>
+                {latestReport ? (
+                  <p className="text-sm text-muted-foreground">
+                    This week: {latestReport.questionsAnswered} questions, {Math.round(latestReport.accuracy * 100)}% accuracy
+                  </p>
+                ) : (
+                  <p className="text-sm text-muted-foreground">
+                    See your weekly progress and AI insights
+                  </p>
+                )}
+              </CardContent>
+            </Card>
+          </Link>
+
           {/* Adaptive Practice */}
           <Link href="/practice" className="group block">
             <Card className="h-full transition-all duration-200 group-hover:ring-2 group-hover:ring-primary/30 group-hover:shadow-md">

@@ -5,6 +5,8 @@ import {
   getRecentObservations,
   getAllSkillMastery,
 } from '@/lib/student-profile'
+import type { BehaviorSignals } from '@/lib/behavior-tracker'
+import { formatBehaviorForPrompt } from '@/lib/behavior-tracker'
 
 // ---------------------------------------------------------------------------
 // Types
@@ -21,6 +23,8 @@ export interface StudentContext {
   recentObservations: { observation: string; skillId: string | null }[]
   totalQuestionsAnswered: number
   overallAccuracy: number
+  /** Live behavior signals from the current session, if available */
+  behaviorSignals?: BehaviorSignals
 }
 
 // ---------------------------------------------------------------------------
@@ -150,6 +154,12 @@ export function formatContextForPrompt(context: StudentContext): string {
     for (const obs of context.recentObservations) {
       lines.push(`- "${obs.observation}"`)
     }
+  }
+
+  // --- Behavior Signals ---
+  if (context.behaviorSignals) {
+    lines.push('')
+    lines.push(formatBehaviorForPrompt(context.behaviorSignals))
   }
 
   return lines.join('\n')

@@ -2,7 +2,7 @@
 
 import { useState } from "react"
 import Link from "next/link"
-import { Menu, LogOut, GraduationCap } from "lucide-react"
+import { Menu, LogOut, GraduationCap, Settings } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import {
   Sheet,
@@ -12,6 +12,8 @@ import {
   SheetClose,
 } from "@/components/ui/sheet"
 import { ThemeToggle } from "@/components/layout/theme-toggle"
+import { StreakBadge } from "@/components/layout/streak-badge"
+import { NotificationBell } from "@/components/layout/notification-bell"
 import { useAuth } from "@/hooks/use-auth"
 
 const navLinks = [
@@ -19,6 +21,8 @@ const navLinks = [
   { href: "/week", label: "Lessons" },
   { href: "/practice", label: "Practice" },
   { href: "/practice-test", label: "Practice Tests" },
+  { href: "/mistakes", label: "Mistakes" },
+  { href: "/reports", label: "Reports" },
 ] as const
 
 export function Nav() {
@@ -51,10 +55,21 @@ export function Nav() {
         {/* Desktop right side */}
         <div className="hidden items-center gap-3 md:flex">
           <ThemeToggle />
+          {!loading && user && (
+            <>
+              <StreakBadge />
+              <NotificationBell />
+            </>
+          )}
           {!loading && (
             <>
               {user ? (
                 <>
+                  <Button variant="ghost" size="icon" className="text-muted-foreground hover:text-foreground" asChild>
+                    <Link href="/settings" aria-label="Settings">
+                      <Settings className="size-4" />
+                    </Link>
+                  </Button>
                   <span className="max-w-[180px] truncate text-sm text-muted-foreground">
                     {user.email}
                   </span>
@@ -118,6 +133,14 @@ export function Nav() {
                       <p className="truncate text-sm text-muted-foreground">
                         {user.email}
                       </p>
+                      <SheetClose asChild>
+                        <Button variant="ghost" className="justify-start" asChild>
+                          <Link href="/settings">
+                            <Settings className="mr-2 size-4" />
+                            Settings
+                          </Link>
+                        </Button>
+                      </SheetClose>
                       <SheetClose asChild>
                         <Button variant="outline" onClick={signOut}>
                           <LogOut className="mr-2 size-4" />

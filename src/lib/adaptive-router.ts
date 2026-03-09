@@ -6,6 +6,7 @@ import { getSkillsDueForReview } from '@/lib/spaced-repetition'
 import { questionSkillMap } from '@/data/question-skill-map'
 import { getWeeks, getDiagnostic, getPracticeTest } from '@/lib/content'
 import { createClient } from '@/lib/supabase/client'
+import { generateQuestions, toQuestionFormat } from '@/lib/ai/question-generator'
 
 // ---------------------------------------------------------------------------
 // Types
@@ -165,6 +166,52 @@ function findQuestionForSkill(
   })
 
   return pool[0]
+}
+
+/**
+ * Counts the number of unanswered questions available for a skill.
+ */
+function countUnansweredForSkill(
+  skillId: string,
+  allQuestions: Question[],
+  answeredCorrectlyIds: Set<string>,
+): number {
+  const questionById = new Map(allQuestions.map((q) => [q.id, q]))
+  let count = 0
+  for (const [questionId, mappedSkill] of Object.entries(questionSkillMap)) {
+    if (mappedSkill === skillId && questionById.has(questionId) && !answeredCorrectlyIds.has(questionId)) {
+      count++
+    }
+  }
+  return count
+}
+
+/**
+ * Attempts to generate AI questions for a skill and returns one as a
+ * NextQuestionResult if successful.
+ */
+async function tryGenerateQuestion(
+  userId: string,
+  skillId: string,
+  targetDifficulty: number,
+  reason: string,
+): Promise<NextQuestionResult | null> {
+  try {
+    const generated = await generateQuestions(skillId, targetDifficulty, 3, userId)
+    if (generated.length === 0) return null
+
+    const question = toQuestionFormat(generated[0])
+    console.log(`[adaptive-router] Used AI-generated question for skill ${skillId}`)
+    return {
+      question,
+      skillId,
+      difficulty: targetDifficulty,
+      reason,
+    }
+  } catch (error) {
+    console.error(`[adaptive-router] Failed to generate questions for ${skillId}:`, error)
+    return null
+  }
 }
 
 // ---------------------------------------------------------------------------
@@ -409,6 +456,33 @@ export async function getNextQuestion(
         reason:
           'Great job mastering this skill. A quick review will keep it sharp.',
       }
+    }
+  }
+
+  // ---------------------------------------------------------------------------
+  // Fallback: AI-generated questions when the question bank is exhausted
+  // ---------------------------------------------------------------------------
+  // Try to generate questions for the skill with the fewest remaining questions
+  // in the existing bank. This ensures infinite practice.
+  const skillsToGenerate = allMastery
+    .filter((m) => m.mastery_level < 0.8)
+    .sort((a, b) => {
+      const aCount = countUnansweredForSkill(a.skill_id, allQuestions, answeredCorrectly)
+      const bCount = countUnansweredForSkill(b.skill_id, allQuestions, answeredCorrectly)
+      return aCount - bCount
+    })
+
+  for (const mastery of skillsToGenerate) {
+    const unanswered = countUnansweredForSkill(mastery.skill_id, allQuestions, answeredCorrectly)
+    if (unanswered < 2) {
+      const targetDiff = getTargetDifficulty(mastery.mastery_level)
+      const generated = await tryGenerateQuestion(
+        userId,
+        mastery.skill_id,
+        targetDiff,
+        'Here is a fresh practice question generated just for you.',
+      )
+      if (generated) return generated
     }
   }
 

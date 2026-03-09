@@ -17,6 +17,10 @@ export async function logInteraction(data: {
   aiHelpUsed: boolean
   difficultyLevel?: number
   sessionId?: string
+  /** Seconds from question shown to first interaction */
+  timeToFirstAction?: number
+  /** Number of answer changes before final submission */
+  answerChanges?: number
 }): Promise<void> {
   try {
     const supabase = createClient()
@@ -39,6 +43,8 @@ export async function logInteraction(data: {
         ai_help_used: data.aiHelpUsed,
         difficulty_level: data.difficultyLevel ?? null,
         session_id: data.sessionId ?? null,
+        time_to_first_action: data.timeToFirstAction ?? null,
+        answer_changes: data.answerChanges ?? null,
       })
       .then(({ error }) => {
         if (error) {
