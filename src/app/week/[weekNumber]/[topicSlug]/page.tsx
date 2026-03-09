@@ -20,6 +20,8 @@ import {
   ExternalLink,
   PlayCircle,
 } from "lucide-react"
+import { getTopicVisuals } from "@/data/topic-visuals"
+import { TopicVisualRenderer } from "@/components/visual/topic-visual-renderer"
 import type { VideoResource } from "@/data/video-library"
 
 interface TopicPageProps {
@@ -79,6 +81,8 @@ export default async function TopicPage({ params }: TopicPageProps) {
     }
   }
 
+  const topicVisuals = getTopicVisuals(topicSlug)
+
   return (
     <div className="mx-auto max-w-3xl space-y-8">
       {/* Track lesson progress */}
@@ -135,6 +139,18 @@ export default async function TopicPage({ params }: TopicPageProps) {
             </CardContent>
           </Card>
         </a>
+      )}
+
+      {/* Visual Aids */}
+      {topicVisuals.length > 0 && (
+        <section className="space-y-4">
+          <h2 className="text-xl font-semibold">Visual Aids</h2>
+          <div className="grid gap-4">
+            {topicVisuals.map((visual, index) => (
+              <TopicVisualRenderer key={index} visual={visual} />
+            ))}
+          </div>
+        </section>
       )}
 
       {/* Lesson Content */}
