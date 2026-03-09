@@ -1,7 +1,7 @@
 import AnthropicVertex from '@anthropic-ai/vertex-sdk'
 
 const PROJECT_ID = 'fxei-meta-project'
-const REGION = 'us-east1'
+const REGION = 'us-east5'
 
 let clientInstance: AnthropicVertex | null = null
 

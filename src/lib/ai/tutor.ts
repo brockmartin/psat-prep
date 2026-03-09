@@ -1,6 +1,6 @@
 import { getAIClient } from './vertex-client'
 
-const MODEL = 'claude-sonnet-4-20250514'
+const MODEL = 'claude-opus-4-6'
 
 const FALLBACK_MESSAGE =
   'I am temporarily unable to respond. Please try again in a moment.'
