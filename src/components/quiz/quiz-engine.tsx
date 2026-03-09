@@ -57,6 +57,7 @@ export interface QuizEngineProps {
   questions: Question[];
   title: string;
   onComplete?: (results: QuizResult) => void;
+  onDone?: () => void;
   showTimer?: boolean;
   timeLimitSeconds?: number;
   showExplanationImmediately?: boolean;
@@ -102,6 +103,7 @@ export function QuizEngine({
   questions,
   title,
   onComplete,
+  onDone,
   showTimer = false,
   timeLimitSeconds,
   showExplanationImmediately = true,
@@ -569,7 +571,7 @@ export function QuizEngine({
               Review Mistakes ({missedQuestions.length})
             </Button>
           )}
-          <Button onClick={() => onComplete?.(results)}>Done</Button>
+          <Button onClick={() => { onDone ? onDone() : onComplete?.(results) }}>Done</Button>
         </div>
       </div>
     );

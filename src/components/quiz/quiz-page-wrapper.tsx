@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from "react";
+import { useRouter } from "next/navigation";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
@@ -42,13 +43,17 @@ export function QuizPageWrapper({
   allowReview = true,
 }: QuizPageWrapperProps) {
   const [started, setStarted] = useState(false);
+  const [completed, setCompleted] = useState(false);
+  const [finalResults, setFinalResults] = useState<QuizResult | null>(null);
   const { user } = useAuth();
+  const router = useRouter();
 
   // Collect unique domains covered
   const domains = Array.from(new Set(questions.map((q) => q.domain)));
 
   function handleComplete(results: QuizResult) {
-    console.log("[QuizPageWrapper] Quiz completed:", results);
+    setFinalResults(results);
+    setCompleted(true);
 
     if (user && quizId) {
       saveQuizResult(
@@ -60,7 +65,6 @@ export function QuizPageWrapper({
       )
     }
 
-    // Update skill mastery for all answered questions (fire-and-forget)
     if (user) {
       const masteryUpdates = results.responses
         .map((r) => {
@@ -80,10 +84,8 @@ export function QuizPageWrapper({
         });
       }
 
-      // Update study streak (fire-and-forget, idempotent)
       updateStreak(user.id)
         .then((result) => {
-          // Dispatch custom event so StreakBadge can update without a page refresh
           window.dispatchEvent(
             new CustomEvent("streak-updated", { detail: result }),
           );
@@ -92,6 +94,10 @@ export function QuizPageWrapper({
           console.warn("[QuizPageWrapper] Failed to update streak:", err);
         });
     }
+  }
+
+  function handleDone() {
+    router.push("/dashboard");
   }
 
   // ---------------------------------------------------------------------------
@@ -148,6 +154,7 @@ export function QuizPageWrapper({
       questions={questions}
       title={title}
       onComplete={handleComplete}
+      onDone={handleDone}
       showTimer={showTimer}
       timeLimitSeconds={timeLimitSeconds}
       showExplanationImmediately={showExplanationImmediately}
