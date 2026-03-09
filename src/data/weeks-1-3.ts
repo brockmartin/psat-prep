@@ -1,0 +1,1092 @@
+import type { Week, Topic, Question } from '@/types/content';
+
+// =============================================================================
+// WEEK 1: Foundations -- Fractions, Decimals, Percentages, Ratios
+// =============================================================================
+
+const w1Topic1: Topic = {
+  id: 'w1-t1',
+  weekNumber: 1,
+  slug: 'fractions-decimals-percentages',
+  title: 'Fractions, Decimals, and Percentages',
+  videoLink: 'https://www.khanacademy.org/math/arithmetic/arith-review-decimals',
+  content: `A **fraction** is just a way of showing a part of something. Think of a pizza cut into 8 slices. If you eat 3 slices, you ate 3/8 of the pizza. The top number (numerator) tells you how many pieces you have. The bottom number (denominator) tells you how many equal pieces the whole thing was cut into.
+
+**Adding and subtracting fractions** is easy once you know the trick: the bottom numbers (denominators) have to be the same. If they are not the same, you have to find a "common denominator" -- a number that both denominators divide into evenly. Once the bottoms match, just add or subtract the tops. For **multiplying fractions**, just multiply straight across -- tops times tops, bottoms times bottoms. For **dividing fractions**, flip the second fraction upside down and then multiply.
+
+A **decimal** is another way to write a fraction. To turn a fraction into a decimal, divide the top by the bottom. For example, 1/4 = 1 divided by 4 = 0.25. A **percentage** means "out of 100." So 25% means 25 out of 100, which is the same as 0.25 or 1/4.
+
+To turn a decimal into a percentage, multiply by 100. To turn a percentage into a decimal, divide by 100.
+
+These conversions show up all over the PSAT. If you are comfortable moving between fractions, decimals, and percentages, many problems become much easier.`,
+  questions: [
+    {
+      id: 'w1-t1-q1',
+      text: 'A recipe calls for 3/4 cup of sugar. If you are making 1/3 of the recipe, how much sugar do you need?',
+      type: 'multiple_choice',
+      options: [
+        { label: 'A', text: '1/4 cup' },
+        { label: 'B', text: '3/12 cup' },
+        { label: 'C', text: '1/3 cup' },
+        { label: 'D', text: '3/7 cup' },
+      ],
+      correctAnswer: 'A',
+      explanation: 'Multiply the fractions: 3/4 * 1/3 = 3/12. Simplify 3/12 by dividing top and bottom by 3: 1/4 cup. Note that answer B is the same value but not simplified.',
+      difficulty: 1,
+      domain: 'problem_solving',
+    },
+    {
+      id: 'w1-t1-q2',
+      text: 'What is 0.35 expressed as a percentage?',
+      type: 'multiple_choice',
+      options: [
+        { label: 'A', text: '0.35%' },
+        { label: 'B', text: '3.5%' },
+        { label: 'C', text: '35%' },
+        { label: 'D', text: '350%' },
+      ],
+      correctAnswer: 'C',
+      explanation: 'To convert a decimal to a percentage, multiply by 100. 0.35 * 100 = 35%. A common mistake is forgetting to move the decimal point two places to the right.',
+      difficulty: 1,
+      domain: 'problem_solving',
+    },
+    {
+      id: 'w1-t1-q3',
+      text: 'Your meal at a restaurant costs $24.50. You decide to leave an 18% tip. How much is the tip?',
+      type: 'multiple_choice',
+      options: [
+        { label: 'A', text: '$4.41' },
+        { label: 'B', text: '$4.50' },
+        { label: 'C', text: '$4.90' },
+        { label: 'D', text: '$5.41' },
+      ],
+      correctAnswer: 'A',
+      explanation: 'Convert 18% to a decimal: 0.18. Multiply: $24.50 * 0.18 = $4.41. Distractor B comes from rounding too early, C from using 20%, and D from using 22%.',
+      difficulty: 2,
+      domain: 'problem_solving',
+    },
+    {
+      id: 'w1-t1-q4',
+      text: 'A pair of sneakers originally costs $80. The store offers a 25% discount, and then you must pay 8% sales tax on the discounted price. What is the total amount you pay?',
+      type: 'multiple_choice',
+      options: [
+        { label: 'A', text: '$60.00' },
+        { label: 'B', text: '$62.40' },
+        { label: 'C', text: '$64.80' },
+        { label: 'D', text: '$66.40' },
+      ],
+      correctAnswer: 'C',
+      explanation: 'Step 1: Find the discount. 25% of $80 = $20. Discounted price = $80 - $20 = $60. Step 2: Find the tax on the discounted price. 8% of $60 = $4.80. Step 3: Total = $60 + $4.80 = $64.80. A common mistake is applying tax to the original price instead of the sale price.',
+      difficulty: 2,
+      domain: 'problem_solving',
+    },
+    {
+      id: 'w1-t1-q5',
+      text: 'Jenna ate 1/4 of a cake on Monday and 1/3 of the remaining cake on Tuesday. What fraction of the whole cake is left?',
+      type: 'multiple_choice',
+      options: [
+        { label: 'A', text: '5/12' },
+        { label: 'B', text: '1/2' },
+        { label: 'C', text: '7/12' },
+        { label: 'D', text: '2/3' },
+      ],
+      correctAnswer: 'B',
+      explanation: 'After Monday, 1 - 1/4 = 3/4 of the cake remains. On Tuesday Jenna eats 1/3 of that remainder: 1/3 * 3/4 = 3/12 = 1/4. Total eaten: 1/4 + 1/4 = 2/4 = 1/2. So 1 - 1/2 = 1/2 of the cake is left. A common mistake is computing 1/3 of the whole cake instead of 1/3 of the remaining cake.',
+      difficulty: 3,
+      domain: 'problem_solving',
+    },
+  ],
+};
+
+const w1Topic2: Topic = {
+  id: 'w1-t2',
+  weekNumber: 1,
+  slug: 'ratios-and-proportions',
+  title: 'Ratios and Proportions',
+  videoLink: 'https://www.khanacademy.org/math/cc-sixth-grade-math/cc-6th-ratios-prop-topic',
+  content: `A **ratio** compares two quantities. If there are 3 cats and 5 dogs, the ratio of cats to dogs is 3:5. You can also write it as a fraction: 3/5. A ratio tells you how the two quantities relate to each other, but it does not tell you the actual numbers.
+
+A **proportion** is an equation that says two ratios are equal. For example, 3/5 = 6/10 is a proportion. Proportions are super useful because if you know three of the four numbers, you can find the missing one.
+
+The trick to solving a proportion is **cross-multiplying**. If you have a/b = c/d, then a * d = b * c. This turns the proportion into a regular equation that you can solve.
+
+Ratios and proportions show up in word problems about recipes, maps, scale drawings, speed, and unit rates. Once you get comfortable setting up the proportion, the math is usually pretty simple.`,
+  questions: [
+    {
+      id: 'w1-t2-q1',
+      text: 'In a class of 30 students, the ratio of boys to girls is 2:3. How many boys are in the class?',
+      type: 'multiple_choice',
+      options: [
+        { label: 'A', text: '10' },
+        { label: 'B', text: '12' },
+        { label: 'C', text: '15' },
+        { label: 'D', text: '18' },
+      ],
+      correctAnswer: 'B',
+      explanation: 'The ratio 2:3 means there are 2 + 3 = 5 total parts. Each part = 30 / 5 = 6 students. Boys = 2 * 6 = 12. A common mistake is dividing 30 by 2 or 3 directly.',
+      difficulty: 1,
+      domain: 'problem_solving',
+    },
+    {
+      id: 'w1-t2-q2',
+      text: 'A bag of 6 apples costs $4.50. What is the price per apple?',
+      type: 'multiple_choice',
+      options: [
+        { label: 'A', text: '$0.65' },
+        { label: 'B', text: '$0.70' },
+        { label: 'C', text: '$0.75' },
+        { label: 'D', text: '$0.80' },
+      ],
+      correctAnswer: 'C',
+      explanation: 'Unit rate = total cost / number of items = $4.50 / 6 = $0.75 per apple.',
+      difficulty: 1,
+      domain: 'problem_solving',
+    },
+    {
+      id: 'w1-t2-q3',
+      text: 'On a map, 1 inch represents 50 miles. Two cities are 4.5 inches apart on the map. What is the actual distance between the two cities?',
+      type: 'multiple_choice',
+      options: [
+        { label: 'A', text: '200 miles' },
+        { label: 'B', text: '215 miles' },
+        { label: 'C', text: '225 miles' },
+        { label: 'D', text: '250 miles' },
+      ],
+      correctAnswer: 'C',
+      explanation: 'Set up the proportion: 1 inch / 50 miles = 4.5 inches / x miles. Cross multiply: x = 4.5 * 50 = 225 miles.',
+      difficulty: 2,
+      domain: 'problem_solving',
+    },
+    {
+      id: 'w1-t2-q4',
+      text: 'A cookie recipe calls for 2 1/2 cups of flour to make 24 cookies. How many cups of flour do you need to make 60 cookies?',
+      type: 'multiple_choice',
+      options: [
+        { label: 'A', text: '5 cups' },
+        { label: 'B', text: '5 1/2 cups' },
+        { label: 'C', text: '6 cups' },
+        { label: 'D', text: '6 1/4 cups' },
+      ],
+      correctAnswer: 'D',
+      explanation: 'Set up a proportion: 2.5 cups / 24 cookies = x cups / 60 cookies. Cross multiply: 24x = 2.5 * 60 = 150. Divide: x = 150 / 24 = 6.25 = 6 1/4 cups.',
+      difficulty: 2,
+      domain: 'problem_solving',
+    },
+    {
+      id: 'w1-t2-q5',
+      text: 'A car travels 150 miles in 2.5 hours. A second car travels 210 miles in 3 hours. How many more miles per hour does the second car travel compared to the first?',
+      type: 'multiple_choice',
+      options: [
+        { label: 'A', text: '5 mph' },
+        { label: 'B', text: '10 mph' },
+        { label: 'C', text: '15 mph' },
+        { label: 'D', text: '20 mph' },
+      ],
+      correctAnswer: 'B',
+      explanation: 'First car rate: 150 / 2.5 = 60 mph. Second car rate: 210 / 3 = 70 mph. Difference: 70 - 60 = 10 mph.',
+      difficulty: 3,
+      domain: 'problem_solving',
+    },
+  ],
+};
+
+const w1QuizQuestions: Question[] = [
+  {
+    id: 'w1-quiz-q1',
+    text: 'What is 3/8 + 1/4?',
+    type: 'multiple_choice',
+    options: [
+      { label: 'A', text: '4/12' },
+      { label: 'B', text: '1/2' },
+      { label: 'C', text: '5/8' },
+      { label: 'D', text: '4/8' },
+    ],
+    correctAnswer: 'C',
+    explanation: 'Convert 1/4 to eighths: 2/8. Then 3/8 + 2/8 = 5/8.',
+    difficulty: 1,
+    domain: 'problem_solving',
+  },
+  {
+    id: 'w1-quiz-q2',
+    text: 'Express 7/20 as a percentage.',
+    type: 'multiple_choice',
+    options: [
+      { label: 'A', text: '7%' },
+      { label: 'B', text: '14%' },
+      { label: 'C', text: '35%' },
+      { label: 'D', text: '70%' },
+    ],
+    correctAnswer: 'C',
+    explanation: '7/20 = 7 divided by 20 = 0.35 = 35%.',
+    difficulty: 1,
+    domain: 'problem_solving',
+  },
+  {
+    id: 'w1-quiz-q3',
+    text: 'A bookstore sells notebooks for $3.60 each. Emma buys 5 notebooks and pays with a $20 bill. How much change does she receive?',
+    type: 'multiple_choice',
+    options: [
+      { label: 'A', text: '$1.00' },
+      { label: 'B', text: '$2.00' },
+      { label: 'C', text: '$2.40' },
+      { label: 'D', text: '$3.00' },
+    ],
+    correctAnswer: 'B',
+    explanation: '5 * $3.60 = $18.00. Change = $20.00 - $18.00 = $2.00.',
+    difficulty: 1,
+    domain: 'problem_solving',
+  },
+  {
+    id: 'w1-quiz-q4',
+    text: 'A shirt is priced at $45. During a sale it is marked 20% off. What is the sale price?',
+    type: 'multiple_choice',
+    options: [
+      { label: 'A', text: '$9.00' },
+      { label: 'B', text: '$25.00' },
+      { label: 'C', text: '$36.00' },
+      { label: 'D', text: '$40.00' },
+    ],
+    correctAnswer: 'C',
+    explanation: '20% of $45 = $9. Sale price = $45 - $9 = $36.',
+    difficulty: 2,
+    domain: 'problem_solving',
+  },
+  {
+    id: 'w1-quiz-q5',
+    text: 'Divide: 5/6 divided by 2/3. What is the result in simplest form?',
+    type: 'multiple_choice',
+    options: [
+      { label: 'A', text: '5/9' },
+      { label: 'B', text: '10/18' },
+      { label: 'C', text: '5/4' },
+      { label: 'D', text: '15/12' },
+    ],
+    correctAnswer: 'C',
+    explanation: 'Flip the second fraction and multiply: 5/6 * 3/2 = 15/12 = 5/4. Note that D is the unsimplified version.',
+    difficulty: 2,
+    domain: 'problem_solving',
+  },
+  {
+    id: 'w1-quiz-q6',
+    text: 'The ratio of fiction to non-fiction books on a shelf is 5:3. If there are 40 books total, how many are non-fiction?',
+    type: 'multiple_choice',
+    options: [
+      { label: 'A', text: '8' },
+      { label: 'B', text: '15' },
+      { label: 'C', text: '24' },
+      { label: 'D', text: '25' },
+    ],
+    correctAnswer: 'B',
+    explanation: 'Total parts = 5 + 3 = 8. Each part = 40 / 8 = 5. Non-fiction = 3 * 5 = 15.',
+    difficulty: 2,
+    domain: 'problem_solving',
+  },
+  {
+    id: 'w1-quiz-q7',
+    text: 'Solve the proportion: 8/12 = x/21',
+    type: 'multiple_choice',
+    options: [
+      { label: 'A', text: 'x = 12' },
+      { label: 'B', text: 'x = 14' },
+      { label: 'C', text: 'x = 16' },
+      { label: 'D', text: 'x = 18' },
+    ],
+    correctAnswer: 'B',
+    explanation: 'Cross multiply: 8 * 21 = 12 * x. 168 = 12x. x = 14.',
+    difficulty: 2,
+    domain: 'problem_solving',
+  },
+  {
+    id: 'w1-quiz-q8',
+    text: 'A runner completes 3 laps of a track in 5.4 minutes. At that pace, how many minutes will it take to complete 10 laps?',
+    type: 'multiple_choice',
+    options: [
+      { label: 'A', text: '16 minutes' },
+      { label: 'B', text: '18 minutes' },
+      { label: 'C', text: '20 minutes' },
+      { label: 'D', text: '54 minutes' },
+    ],
+    correctAnswer: 'B',
+    explanation: 'Rate: 5.4 minutes / 3 laps = 1.8 minutes per lap. For 10 laps: 1.8 * 10 = 18 minutes.',
+    difficulty: 2,
+    domain: 'problem_solving',
+  },
+  {
+    id: 'w1-quiz-q9',
+    text: 'A store raises the price of a $60 item by 15%, then puts it on sale for 15% off the new price. What is the final price?',
+    type: 'multiple_choice',
+    options: [
+      { label: 'A', text: '$58.65' },
+      { label: 'B', text: '$59.00' },
+      { label: 'C', text: '$60.00' },
+      { label: 'D', text: '$61.35' },
+    ],
+    correctAnswer: 'A',
+    explanation: 'Step 1: Increase by 15%. $60 * 1.15 = $69. Step 2: Decrease by 15%. $69 * 0.85 = $58.65. The answer is NOT $60 because 15% of $69 is more than 15% of $60.',
+    difficulty: 3,
+    domain: 'problem_solving',
+  },
+  {
+    id: 'w1-quiz-q10',
+    text: 'A recipe for 12 muffins calls for 2/3 cup of milk. Sarah wants to make 30 muffins. How many cups of milk does she need?',
+    type: 'multiple_choice',
+    options: [
+      { label: 'A', text: '1 1/3 cups' },
+      { label: 'B', text: '1 2/3 cups' },
+      { label: 'C', text: '2 cups' },
+      { label: 'D', text: '2 1/2 cups' },
+    ],
+    correctAnswer: 'B',
+    explanation: 'Set up a proportion: (2/3) / 12 = x / 30. Cross multiply: 12x = (2/3) * 30 = 20. x = 20/12 = 5/3 = 1 2/3 cups.',
+    difficulty: 2,
+    domain: 'problem_solving',
+  },
+];
+
+const w1WorksheetQuestions: Question[] = [
+  { id: 'w1-ws-q1', text: 'What is 3/4 + 2/3?', type: 'student_produced', correctAnswer: '17/12', explanation: 'LCD = 12. 9/12 + 8/12 = 17/12 = 1 5/12.', difficulty: 1, domain: 'problem_solving' },
+  { id: 'w1-ws-q2', text: 'Subtract: 7/8 - 1/4', type: 'student_produced', correctAnswer: '5/8', explanation: '1/4 = 2/8. 7/8 - 2/8 = 5/8.', difficulty: 1, domain: 'problem_solving' },
+  { id: 'w1-ws-q3', text: 'Multiply: 2/5 x 3/7', type: 'student_produced', correctAnswer: '6/35', explanation: '(2*3)/(5*7) = 6/35.', difficulty: 2, domain: 'problem_solving' },
+  { id: 'w1-ws-q4', text: 'Divide: 5/6 by 2/3', type: 'student_produced', correctAnswer: '5/4', explanation: 'Flip and multiply: 5/6 * 3/2 = 15/12 = 5/4.', difficulty: 2, domain: 'problem_solving' },
+  { id: 'w1-ws-q5', text: 'Simplify: 4/12 + 5/6 - 1/3', type: 'student_produced', correctAnswer: '5/6', explanation: 'All to sixths: 2/6 + 5/6 - 2/6 = 5/6.', difficulty: 2, domain: 'problem_solving' },
+  { id: 'w1-ws-q6', text: 'Convert 3/8 to a decimal.', type: 'student_produced', correctAnswer: '0.375', explanation: '3 / 8 = 0.375.', difficulty: 1, domain: 'problem_solving' },
+  { id: 'w1-ws-q7', text: 'What is 25% of 180?', type: 'student_produced', correctAnswer: '45', explanation: '0.25 * 180 = 45.', difficulty: 1, domain: 'problem_solving' },
+  { id: 'w1-ws-q8', text: 'Convert 0.045 to a percentage.', type: 'student_produced', correctAnswer: '4.5%', explanation: '0.045 * 100 = 4.5%.', difficulty: 2, domain: 'problem_solving' },
+  { id: 'w1-ws-q9', text: 'A shirt costs $40. It is on sale for 15% off. What is the sale price?', type: 'student_produced', correctAnswer: '$34', explanation: '15% of $40 = $6. Sale price = $40 - $6 = $34.', difficulty: 2, domain: 'problem_solving' },
+  { id: 'w1-ws-q10', text: 'A student scored 18 out of 24 on a quiz. What percentage did the student score?', type: 'student_produced', correctAnswer: '75%', explanation: '18/24 = 0.75 = 75%.', difficulty: 2, domain: 'problem_solving' },
+  { id: 'w1-ws-q11', text: 'Write the ratio of 12 to 18 in simplest form.', type: 'student_produced', correctAnswer: '2:3', explanation: 'Divide both by 6: 2:3.', difficulty: 1, domain: 'problem_solving' },
+  { id: 'w1-ws-q12', text: 'Solve the proportion: 4/x = 8/14', type: 'student_produced', correctAnswer: '7', explanation: 'Cross multiply: 8x = 56. x = 7.', difficulty: 1, domain: 'problem_solving' },
+  { id: 'w1-ws-q13', text: 'A recipe calls for 3 cups of flour for every 2 cups of sugar. If you use 9 cups of flour, how many cups of sugar do you need?', type: 'student_produced', correctAnswer: '6', explanation: '3/2 = 9/x. 3x = 18. x = 6.', difficulty: 2, domain: 'problem_solving' },
+  { id: 'w1-ws-q14', text: 'On a map, 1 inch represents 25 miles. Two cities are 3.5 inches apart. How many miles apart are they?', type: 'student_produced', correctAnswer: '87.5', explanation: '3.5 * 25 = 87.5 miles.', difficulty: 2, domain: 'problem_solving' },
+  { id: 'w1-ws-q15', text: 'The ratio of boys to girls in a class is 5:7. If there are 35 boys, how many girls are in the class?', type: 'student_produced', correctAnswer: '49', explanation: '5 parts = 35, 1 part = 7. Girls = 7*7 = 49.', difficulty: 2, domain: 'problem_solving' },
+  { id: 'w1-ws-q16', text: 'A pizza is cut into 8 equal slices. Marcus eats 3 slices and Sarah eats 2 slices. What fraction of the pizza is left?', type: 'student_produced', correctAnswer: '3/8', explanation: '5 eaten, 3 left. 3/8 = 0.375 = 37.5%.', difficulty: 2, domain: 'problem_solving' },
+  { id: 'w1-ws-q17', text: 'A bag has red and blue marbles in a ratio of 3:5. If there are 24 red marbles, how many total marbles are in the bag?', type: 'student_produced', correctAnswer: '64', explanation: '3 parts = 24, 1 part = 8. Total = 8*8 = 64.', difficulty: 2, domain: 'problem_solving' },
+  { id: 'w1-ws-q18', text: 'Carlos ran 2.5 miles on Monday, 3.75 miles on Wednesday, and 1/2 mile on Friday. How many total miles did he run?', type: 'student_produced', correctAnswer: '6.75', explanation: '2.5 + 3.75 + 0.5 = 6.75.', difficulty: 2, domain: 'problem_solving' },
+  { id: 'w1-ws-q19', text: 'A store raises the price of a $60 jacket by 10%, then puts it on sale for 10% off the new price. What is the final price?', type: 'student_produced', correctAnswer: '$59.40', explanation: 'New price = $66. 10% of $66 = $6.60. Final = $59.40.', difficulty: 2, domain: 'problem_solving' },
+  { id: 'w1-ws-q20', text: 'In a class of 30 students, 2/5 are in the band and 40% play a sport. If 3 students do both, how many students do neither band nor a sport?', type: 'student_produced', correctAnswer: '9', explanation: 'Band = 12, Sports = 12, Both = 3. Union = 12+12-3 = 21. Neither = 30-21 = 9.', difficulty: 3, domain: 'problem_solving' },
+];
+
+// =============================================================================
+// WEEK 2: Algebra Basics -- Solving & Graphing Linear Equations
+// =============================================================================
+
+const w2Topic1: Topic = {
+  id: 'w2-t1',
+  weekNumber: 2,
+  slug: 'solving-linear-equations',
+  title: 'Solving Linear Equations',
+  videoLink: 'https://www.khanacademy.org/math/algebra/x2f8bb11595b61c86:solve-equations-inequalities',
+  content: `An **equation** is like a balance scale. Whatever is on the left side equals whatever is on the right side. **Solving for x** means figuring out what number x equals so the equation stays balanced. The golden rule is: **whatever you do to one side, you must do to the other side.** Your goal is to get the variable all by itself on one side.
+
+For **one-step equations**, you only need one operation to isolate x. If the equation says x + 5 = 12, subtract 5 from both sides to get x = 7. If it says 3x = 21, divide both sides by 3 to get x = 7. Think of it as "undoing" whatever was done to x.
+
+For **two-step equations**, you usually undo addition or subtraction first, then undo multiplication or division. For example, in 2x + 5 = 13, subtract 5 from both sides to get 2x = 8, then divide by 2 to get x = 4. Always work from the outside in -- deal with the term that is farthest from x first.
+
+For **multi-step equations**, you may need to distribute first (like expanding 3(x + 4) into 3x + 12) or combine like terms on one side before isolating x. If both sides have a variable, move all the variable terms to one side and all the constants to the other. For example, in 5x + 3 = 2x + 18, subtract 2x from both sides to get 3x + 3 = 18, then subtract 3 to get 3x = 15, and finally divide by 3 to get x = 5. Take it one step at a time and the problem will always simplify down.`,
+  questions: [
+    {
+      id: 'w2-t1-q1',
+      text: 'Solve: x + 17 = 42',
+      type: 'multiple_choice',
+      options: [
+        { label: 'A', text: 'x = 25' },
+        { label: 'B', text: 'x = 35' },
+        { label: 'C', text: 'x = 59' },
+        { label: 'D', text: 'x = 17' },
+      ],
+      correctAnswer: 'A',
+      explanation: 'Subtract 17 from both sides: x = 42 - 17 = 25.',
+      difficulty: 1,
+      domain: 'algebra',
+    },
+    {
+      id: 'w2-t1-q2',
+      text: 'Maya earns $12 per hour at her job, plus a $20 bonus for working on weekends. Last Saturday she earned a total of $68. How many hours did she work?',
+      type: 'multiple_choice',
+      options: [
+        { label: 'A', text: '3 hours' },
+        { label: 'B', text: '4 hours' },
+        { label: 'C', text: '5 hours' },
+        { label: 'D', text: '6 hours' },
+      ],
+      correctAnswer: 'B',
+      explanation: 'Set up the equation: 12h + 20 = 68. Subtract 20: 12h = 48. Divide by 12: h = 4 hours.',
+      difficulty: 1,
+      domain: 'algebra',
+    },
+    {
+      id: 'w2-t1-q3',
+      text: 'Solve: 4(x - 3) = 2x + 10',
+      type: 'multiple_choice',
+      options: [
+        { label: 'A', text: 'x = 7' },
+        { label: 'B', text: 'x = 8' },
+        { label: 'C', text: 'x = 11' },
+        { label: 'D', text: 'x = 13' },
+      ],
+      correctAnswer: 'C',
+      explanation: 'Distribute: 4x - 12 = 2x + 10. Subtract 2x: 2x - 12 = 10. Add 12: 2x = 22. Divide by 2: x = 11.',
+      difficulty: 2,
+      domain: 'algebra',
+    },
+    {
+      id: 'w2-t1-q4',
+      text: 'Solve: 7x - 5 = 3x + 19',
+      type: 'multiple_choice',
+      options: [
+        { label: 'A', text: 'x = 3.5' },
+        { label: 'B', text: 'x = 4' },
+        { label: 'C', text: 'x = 6' },
+        { label: 'D', text: 'x = 8' },
+      ],
+      correctAnswer: 'C',
+      explanation: 'Subtract 3x: 4x - 5 = 19. Add 5: 4x = 24. Divide by 4: x = 6.',
+      difficulty: 2,
+      domain: 'algebra',
+    },
+    {
+      id: 'w2-t1-q5',
+      text: 'Solve: (2x + 1)/3 = 5',
+      type: 'multiple_choice',
+      options: [
+        { label: 'A', text: 'x = 2' },
+        { label: 'B', text: 'x = 7' },
+        { label: 'C', text: 'x = 8' },
+        { label: 'D', text: 'x = 14' },
+      ],
+      correctAnswer: 'B',
+      explanation: 'Multiply both sides by 3: 2x + 1 = 15. Subtract 1: 2x = 14. Divide by 2: x = 7.',
+      difficulty: 3,
+      domain: 'algebra',
+    },
+  ],
+};
+
+const w2Topic2: Topic = {
+  id: 'w2-t2',
+  weekNumber: 2,
+  slug: 'graphing-linear-equations',
+  title: 'Graphing Linear Equations (Slope and Y-Intercept)',
+  videoLink: 'https://www.khanacademy.org/math/algebra/x2f8bb11595b61c86:linear-equations-graphs',
+  content: `A **linear equation** makes a straight line when you graph it. The most common form is **y = mx + b**, called **slope-intercept form**. In this form, **m** is the slope and **b** is the y-intercept. Once you can spot m and b, you can quickly sketch or understand any line.
+
+The **slope** (m) tells you how steep the line is and which direction it goes. It is calculated as "rise over run" -- how much y changes divided by how much x changes. A **positive slope** means the line goes uphill from left to right. A **negative slope** means the line goes downhill. A slope of zero means the line is perfectly horizontal. In real-world problems, the slope often represents a rate of change, like miles per hour, dollars per item, or points per game.
+
+The **y-intercept** (b) is the point where the line crosses the y-axis. It is the value of y when x = 0. In real-world problems, the y-intercept often represents a starting value or a fixed cost -- for example, a flat delivery fee before any per-item charges.
+
+To **find the slope** between two points (x1, y1) and (x2, y2), use the formula: slope = (y2 - y1) / (x2 - x1). Be careful with negatives! Two lines are **parallel** if they have the same slope. Two lines are **perpendicular** if their slopes are negative reciprocals of each other (for example, 2 and -1/2). If you know the slope and one point, you can plug into y = mx + b to find b and write the full equation.`,
+  questions: [
+    {
+      id: 'w2-t2-q1',
+      text: 'For the equation y = 3x - 2, what are the slope and y-intercept?',
+      type: 'multiple_choice',
+      options: [
+        { label: 'A', text: 'slope = -2, y-intercept = 3' },
+        { label: 'B', text: 'slope = 3, y-intercept = -2' },
+        { label: 'C', text: 'slope = 3, y-intercept = 2' },
+        { label: 'D', text: 'slope = -3, y-intercept = -2' },
+      ],
+      correctAnswer: 'B',
+      explanation: 'In y = mx + b, the coefficient of x is the slope (m = 3) and the constant is the y-intercept (b = -2).',
+      difficulty: 1,
+      domain: 'algebra',
+    },
+    {
+      id: 'w2-t2-q2',
+      text: 'What is the slope of the line passing through the points (1, 4) and (5, 12)?',
+      type: 'multiple_choice',
+      options: [
+        { label: 'A', text: '1' },
+        { label: 'B', text: '2' },
+        { label: 'C', text: '3' },
+        { label: 'D', text: '4' },
+      ],
+      correctAnswer: 'B',
+      explanation: 'Slope = (y2 - y1) / (x2 - x1) = (12 - 4) / (5 - 1) = 8 / 4 = 2.',
+      difficulty: 2,
+      domain: 'algebra',
+    },
+    {
+      id: 'w2-t2-q3',
+      text: 'A plumber charges a $50 flat fee plus $30 per hour. The equation C = 30h + 50 represents the total cost C for h hours of work. What does the slope of 30 represent?',
+      type: 'multiple_choice',
+      options: [
+        { label: 'A', text: 'The flat fee' },
+        { label: 'B', text: 'The total cost' },
+        { label: 'C', text: 'The cost per hour of work' },
+        { label: 'D', text: 'The number of hours worked' },
+      ],
+      correctAnswer: 'C',
+      explanation: 'The slope represents the rate of change. In this context, 30 is the cost per hour of work. The flat fee ($50) is the y-intercept, not the slope.',
+      difficulty: 2,
+      domain: 'algebra',
+    },
+    {
+      id: 'w2-t2-q4',
+      text: 'A line passes through (0, 5) and has a slope of -2. What is the equation of the line in slope-intercept form?',
+      type: 'multiple_choice',
+      options: [
+        { label: 'A', text: 'y = 5x - 2' },
+        { label: 'B', text: 'y = -2x + 5' },
+        { label: 'C', text: 'y = -2x - 5' },
+        { label: 'D', text: 'y = 2x + 5' },
+      ],
+      correctAnswer: 'B',
+      explanation: 'The point (0, 5) means the y-intercept is 5. With slope -2, the equation is y = -2x + 5.',
+      difficulty: 2,
+      domain: 'algebra',
+    },
+    {
+      id: 'w2-t2-q5',
+      text: 'Line A has the equation y = 4x + 1. Which of the following lines is perpendicular to Line A?',
+      type: 'multiple_choice',
+      options: [
+        { label: 'A', text: 'y = 4x - 3' },
+        { label: 'B', text: 'y = -4x + 2' },
+        { label: 'C', text: 'y = -1/4 x + 6' },
+        { label: 'D', text: 'y = 1/4 x - 1' },
+      ],
+      correctAnswer: 'C',
+      explanation: 'Perpendicular lines have slopes that are negative reciprocals. The slope of Line A is 4, so the perpendicular slope is -1/4. The line y = -1/4 x + 6 has slope -1/4. Option A is parallel (same slope). Option B has slope -4, which is the negative but not the reciprocal.',
+      difficulty: 3,
+      domain: 'algebra',
+    },
+  ],
+};
+
+const w2QuizQuestions: Question[] = [
+  {
+    id: 'w2-quiz-q1',
+    text: 'Solve for x: x - 14 = 23',
+    type: 'multiple_choice',
+    options: [
+      { label: 'A', text: 'x = 9' },
+      { label: 'B', text: 'x = 33' },
+      { label: 'C', text: 'x = 37' },
+      { label: 'D', text: 'x = 322' },
+    ],
+    correctAnswer: 'C',
+    explanation: 'Add 14 to both sides: x = 23 + 14 = 37.',
+    difficulty: 1,
+    domain: 'algebra',
+  },
+  {
+    id: 'w2-quiz-q2',
+    text: 'Solve for y: 3y + 8 = 29',
+    type: 'multiple_choice',
+    options: [
+      { label: 'A', text: 'y = 7' },
+      { label: 'B', text: 'y = 9' },
+      { label: 'C', text: 'y = 11' },
+      { label: 'D', text: 'y = 12.33' },
+    ],
+    correctAnswer: 'A',
+    explanation: 'Subtract 8: 3y = 21. Divide by 3: y = 7.',
+    difficulty: 1,
+    domain: 'algebra',
+  },
+  {
+    id: 'w2-quiz-q3',
+    text: 'A gym membership costs $25 per month plus a one-time sign-up fee of $40. If Alex has paid a total of $215, how many months has he been a member?',
+    type: 'multiple_choice',
+    options: [
+      { label: 'A', text: '5 months' },
+      { label: 'B', text: '7 months' },
+      { label: 'C', text: '8 months' },
+      { label: 'D', text: '9 months' },
+    ],
+    correctAnswer: 'B',
+    explanation: 'Set up: 25m + 40 = 215. Subtract 40: 25m = 175. Divide by 25: m = 7.',
+    difficulty: 2,
+    domain: 'algebra',
+  },
+  {
+    id: 'w2-quiz-q4',
+    text: 'Solve: 5(x - 2) = 3x + 6',
+    type: 'multiple_choice',
+    options: [
+      { label: 'A', text: 'x = 4' },
+      { label: 'B', text: 'x = 6' },
+      { label: 'C', text: 'x = 8' },
+      { label: 'D', text: 'x = 16' },
+    ],
+    correctAnswer: 'C',
+    explanation: 'Distribute: 5x - 10 = 3x + 6. Subtract 3x: 2x - 10 = 6. Add 10: 2x = 16. Divide by 2: x = 8.',
+    difficulty: 2,
+    domain: 'algebra',
+  },
+  {
+    id: 'w2-quiz-q5',
+    text: 'What is the slope of the line y = -5x + 3?',
+    type: 'multiple_choice',
+    options: [
+      { label: 'A', text: '3' },
+      { label: 'B', text: '5' },
+      { label: 'C', text: '-3' },
+      { label: 'D', text: '-5' },
+    ],
+    correctAnswer: 'D',
+    explanation: 'In y = mx + b, the slope m is the coefficient of x. Here m = -5.',
+    difficulty: 1,
+    domain: 'algebra',
+  },
+  {
+    id: 'w2-quiz-q6',
+    text: 'Find the slope of the line passing through (-2, 3) and (4, -9).',
+    type: 'multiple_choice',
+    options: [
+      { label: 'A', text: '-2' },
+      { label: 'B', text: '-1' },
+      { label: 'C', text: '1' },
+      { label: 'D', text: '2' },
+    ],
+    correctAnswer: 'A',
+    explanation: 'Slope = (-9 - 3) / (4 - (-2)) = -12 / 6 = -2.',
+    difficulty: 2,
+    domain: 'algebra',
+  },
+  {
+    id: 'w2-quiz-q7',
+    text: 'Which equation represents a line with slope 2/3 and y-intercept -4?',
+    type: 'multiple_choice',
+    options: [
+      { label: 'A', text: 'y = -4x + 2/3' },
+      { label: 'B', text: 'y = 2/3 x - 4' },
+      { label: 'C', text: 'y = 2/3 x + 4' },
+      { label: 'D', text: 'y = -2/3 x - 4' },
+    ],
+    correctAnswer: 'B',
+    explanation: 'Plug into y = mx + b: m = 2/3, b = -4. The equation is y = 2/3 x - 4.',
+    difficulty: 2,
+    domain: 'algebra',
+  },
+  {
+    id: 'w2-quiz-q8',
+    text: 'Solve for x: (x + 4)/2 = 9',
+    type: 'multiple_choice',
+    options: [
+      { label: 'A', text: 'x = 5' },
+      { label: 'B', text: 'x = 7' },
+      { label: 'C', text: 'x = 14' },
+      { label: 'D', text: 'x = 22' },
+    ],
+    correctAnswer: 'C',
+    explanation: 'Multiply both sides by 2: x + 4 = 18. Subtract 4: x = 14.',
+    difficulty: 2,
+    domain: 'algebra',
+  },
+  {
+    id: 'w2-quiz-q9',
+    text: 'A taxi charges $3.00 plus $2.50 per mile. The equation C = 2.50m + 3 models the total cost. If a ride costs $15.50, how many miles was the ride?',
+    type: 'multiple_choice',
+    options: [
+      { label: 'A', text: '4 miles' },
+      { label: 'B', text: '5 miles' },
+      { label: 'C', text: '6 miles' },
+      { label: 'D', text: '7 miles' },
+    ],
+    correctAnswer: 'B',
+    explanation: '2.50m + 3 = 15.50. Subtract 3: 2.50m = 12.50. Divide by 2.50: m = 5 miles.',
+    difficulty: 2,
+    domain: 'algebra',
+  },
+  {
+    id: 'w2-quiz-q10',
+    text: 'A line passes through (2, 1) and (6, 9). What is the equation of the line in slope-intercept form?',
+    type: 'multiple_choice',
+    options: [
+      { label: 'A', text: 'y = 2x - 3' },
+      { label: 'B', text: 'y = 2x + 1' },
+      { label: 'C', text: 'y = 1/2 x + 3' },
+      { label: 'D', text: 'y = -2x + 5' },
+    ],
+    correctAnswer: 'A',
+    explanation: 'Slope = (9 - 1) / (6 - 2) = 8/4 = 2. Using point (2, 1): 1 = 2(2) + b, so b = 1 - 4 = -3. Equation: y = 2x - 3.',
+    difficulty: 3,
+    domain: 'algebra',
+  },
+];
+
+const w2WorksheetQuestions: Question[] = [
+  { id: 'w2-ws-q1', text: 'Simplify: 3x + 7x', type: 'student_produced', correctAnswer: '10x', explanation: 'Combine like terms: 10x.', difficulty: 1, domain: 'algebra' },
+  { id: 'w2-ws-q2', text: 'Simplify: 5a - 2a + 4', type: 'student_produced', correctAnswer: '3a + 4', explanation: '5a - 2a = 3a. Result: 3a + 4.', difficulty: 1, domain: 'algebra' },
+  { id: 'w2-ws-q3', text: 'Simplify: 2(3x + 4) - 5x', type: 'student_produced', correctAnswer: 'x + 8', explanation: 'Distribute: 6x + 8 - 5x = x + 8.', difficulty: 2, domain: 'algebra' },
+  { id: 'w2-ws-q4', text: 'Simplify: 4(2y - 1) + 3(y + 5)', type: 'student_produced', correctAnswer: '11y + 11', explanation: '8y - 4 + 3y + 15 = 11y + 11.', difficulty: 2, domain: 'algebra' },
+  { id: 'w2-ws-q5', text: 'Simplify: 6m - 2(m + 3) + 8', type: 'student_produced', correctAnswer: '4m + 2', explanation: '6m - 2m - 6 + 8 = 4m + 2.', difficulty: 2, domain: 'algebra' },
+  { id: 'w2-ws-q6', text: 'Solve for x: x + 9 = 17', type: 'student_produced', correctAnswer: '8', explanation: 'x = 17 - 9 = 8.', difficulty: 1, domain: 'algebra' },
+  { id: 'w2-ws-q7', text: 'Solve for y: 3y = 21', type: 'student_produced', correctAnswer: '7', explanation: 'y = 21/3 = 7.', difficulty: 1, domain: 'algebra' },
+  { id: 'w2-ws-q8', text: 'Solve for x: 2x + 5 = 19', type: 'student_produced', correctAnswer: '7', explanation: '2x = 14. x = 7.', difficulty: 2, domain: 'algebra' },
+  { id: 'w2-ws-q9', text: 'Solve for n: n/4 - 3 = 2', type: 'student_produced', correctAnswer: '20', explanation: 'n/4 = 5. n = 20.', difficulty: 2, domain: 'algebra' },
+  { id: 'w2-ws-q10', text: 'Solve for w: 5w - 8 = 22', type: 'student_produced', correctAnswer: '6', explanation: '5w = 30. w = 6.', difficulty: 2, domain: 'algebra' },
+  { id: 'w2-ws-q11', text: 'Solve for x: 3(x + 2) = 24', type: 'student_produced', correctAnswer: '6', explanation: '3x + 6 = 24. 3x = 18. x = 6.', difficulty: 2, domain: 'algebra' },
+  { id: 'w2-ws-q12', text: 'Solve for a: 4a - 7 = 2a + 9', type: 'student_produced', correctAnswer: '8', explanation: '2a = 16. a = 8.', difficulty: 2, domain: 'algebra' },
+  { id: 'w2-ws-q13', text: 'Solve for x: 2(x - 3) + 4 = 3x - 8', type: 'student_produced', correctAnswer: '6', explanation: '2x - 2 = 3x - 8. 6 = x.', difficulty: 3, domain: 'algebra' },
+  { id: 'w2-ws-q14', text: 'Solve for y: 5(y + 1) = 3(y + 3) + 2', type: 'student_produced', correctAnswer: '3', explanation: '5y + 5 = 3y + 11. 2y = 6. y = 3.', difficulty: 3, domain: 'algebra' },
+  { id: 'w2-ws-q15', text: 'Solve for m: (m + 6)/3 = (2m - 1)/4', type: 'student_produced', correctAnswer: '13.5', explanation: 'Cross multiply: 4m + 24 = 6m - 3. 27 = 2m. m = 13.5.', difficulty: 3, domain: 'algebra' },
+  { id: 'w2-ws-q16', text: 'What is the slope and y-intercept of y = 3x - 5?', type: 'student_produced', correctAnswer: 'slope=3, y-intercept=-5', explanation: 'Slope m = 3, y-intercept b = -5.', difficulty: 1, domain: 'algebra' },
+  { id: 'w2-ws-q17', text: 'Find the slope of the line through (2, 3) and (6, 11).', type: 'student_produced', correctAnswer: '2', explanation: '(11-3)/(6-2) = 8/4 = 2.', difficulty: 2, domain: 'algebra' },
+  { id: 'w2-ws-q18', text: 'Write the equation of a line with slope 2 passing through (0, -4).', type: 'student_produced', correctAnswer: 'y = 2x - 4', explanation: 'y = mx + b = 2x - 4.', difficulty: 2, domain: 'algebra' },
+  { id: 'w2-ws-q19', text: 'A line passes through (1, 5) and (3, 11). Write the equation in slope-intercept form.', type: 'student_produced', correctAnswer: 'y = 3x + 2', explanation: 'Slope = 3. Using (1,5): 5 = 3+b, b = 2. y = 3x + 2.', difficulty: 2, domain: 'algebra' },
+  { id: 'w2-ws-q20', text: 'Rewrite 2x + 3y = 12 in slope-intercept form. What is the slope?', type: 'student_produced', correctAnswer: '-2/3', explanation: '3y = -2x + 12. y = -2/3 x + 4. Slope = -2/3.', difficulty: 3, domain: 'algebra' },
+];
+
+// =============================================================================
+// WEEK 3: Advanced Algebra -- Systems of Equations & Inequalities
+// =============================================================================
+
+const w3Topic1: Topic = {
+  id: 'w3-t1',
+  weekNumber: 3,
+  slug: 'systems-of-equations',
+  title: 'Systems of Linear Equations',
+  videoLink: 'https://www.khanacademy.org/math/algebra/x2f8bb11595b61c86:systems-of-equations',
+  content: `A **system of equations** is when you have two equations with two unknowns (usually x and y), and you need to find the values that make both equations true at the same time. On a graph, the solution is the point where the two lines cross. If the lines are parallel, there is no solution. If the lines are the same, there are infinitely many solutions.
+
+The **substitution method** works best when one equation already has a variable by itself. For example, if one equation says y = 2x + 1 and the other says 3x + y = 16, you can replace the y in the second equation with 2x + 1 to get 3x + (2x + 1) = 16. Now you have one equation with one unknown, which you already know how to solve. Once you find x, plug it back into either original equation to find y.
+
+The **elimination method** (also called the addition method) works by adding or subtracting the two equations to cancel out one variable. For example, if you have x + y = 10 and x - y = 4, adding them gives 2x = 14, so x = 7, and y = 3. If the coefficients do not match up right away, you can multiply one or both equations by a number to make them match before adding or subtracting.
+
+**When to use which?** If one equation already has a variable isolated (like y = ... or x = ...), use substitution. If both equations are in standard form (like 2x + 3y = 12) and the coefficients line up nicely, use elimination. On the PSAT, word problems about two unknowns -- like ticket prices, coin problems, or comparing two plans -- almost always turn into systems of equations.`,
+  questions: [
+    {
+      id: 'w3-t1-q1',
+      text: 'Solve the system: y = x + 3 and x + y = 11. What is the value of x?',
+      type: 'multiple_choice',
+      options: [
+        { label: 'A', text: 'x = 3' },
+        { label: 'B', text: 'x = 4' },
+        { label: 'C', text: 'x = 5' },
+        { label: 'D', text: 'x = 7' },
+      ],
+      correctAnswer: 'B',
+      explanation: 'Substitute y = x + 3 into the second equation: x + (x + 3) = 11. Simplify: 2x + 3 = 11. Subtract 3: 2x = 8. Divide by 2: x = 4. (Then y = 4 + 3 = 7.)',
+      difficulty: 1,
+      domain: 'algebra',
+    },
+    {
+      id: 'w3-t1-q2',
+      text: 'Solve the system using elimination: 3x + y = 14 and 3x - y = 10. What is y?',
+      type: 'multiple_choice',
+      options: [
+        { label: 'A', text: 'y = 2' },
+        { label: 'B', text: 'y = 4' },
+        { label: 'C', text: 'y = 6' },
+        { label: 'D', text: 'y = 8' },
+      ],
+      correctAnswer: 'A',
+      explanation: 'Add the two equations: (3x + y) + (3x - y) = 14 + 10, which gives 6x = 24, so x = 4. Plug back in: 3(4) + y = 14, so y = 14 - 12 = 2.',
+      difficulty: 2,
+      domain: 'algebra',
+    },
+    {
+      id: 'w3-t1-q3',
+      text: 'Phone Plan A costs $20 per month plus $0.10 per text. Phone Plan B costs $10 per month plus $0.20 per text. At how many texts per month do both plans cost the same?',
+      type: 'multiple_choice',
+      options: [
+        { label: 'A', text: '50 texts' },
+        { label: 'B', text: '75 texts' },
+        { label: 'C', text: '100 texts' },
+        { label: 'D', text: '200 texts' },
+      ],
+      correctAnswer: 'C',
+      explanation: 'Plan A: C = 20 + 0.10t. Plan B: C = 10 + 0.20t. Set equal: 20 + 0.10t = 10 + 0.20t. Subtract 0.10t: 20 = 10 + 0.10t. Subtract 10: 10 = 0.10t. Divide: t = 100 texts.',
+      difficulty: 2,
+      domain: 'algebra',
+    },
+    {
+      id: 'w3-t1-q4',
+      text: 'Solve the system: 2x + 3y = 16 and 5x + 3y = 25. What is x?',
+      type: 'multiple_choice',
+      options: [
+        { label: 'A', text: 'x = 2' },
+        { label: 'B', text: 'x = 3' },
+        { label: 'C', text: 'x = 4' },
+        { label: 'D', text: 'x = 5' },
+      ],
+      correctAnswer: 'B',
+      explanation: 'Subtract the first equation from the second: (5x + 3y) - (2x + 3y) = 25 - 16. This gives 3x = 9, so x = 3.',
+      difficulty: 2,
+      domain: 'algebra',
+    },
+    {
+      id: 'w3-t1-q5',
+      text: 'At a school play, adult tickets cost $8 and student tickets cost $5. A total of 200 tickets were sold, and the total revenue was $1,180. How many adult tickets were sold?',
+      type: 'multiple_choice',
+      options: [
+        { label: 'A', text: '50' },
+        { label: 'B', text: '60' },
+        { label: 'C', text: '80' },
+        { label: 'D', text: '120' },
+      ],
+      correctAnswer: 'B',
+      explanation: 'Let a = adult tickets, s = student tickets. Equations: a + s = 200 and 8a + 5s = 1180. From the first: s = 200 - a. Substitute: 8a + 5(200 - a) = 1180. Simplify: 8a + 1000 - 5a = 1180. So 3a = 180, a = 60.',
+      difficulty: 3,
+      domain: 'algebra',
+    },
+  ],
+};
+
+const w3Topic2: Topic = {
+  id: 'w3-t2',
+  weekNumber: 3,
+  slug: 'linear-inequalities',
+  title: 'Linear Inequalities',
+  videoLink: 'https://www.khanacademy.org/math/algebra/x2f8bb11595b61c86:inequalities-systems-graphs',
+  content: `An **inequality** is like an equation, but instead of saying two things are equal, it says one side is bigger or smaller. The symbols are: < (less than), > (greater than), <= (less than or equal to), and >= (greater than or equal to). In word problems, "at most" means <=, "at least" means >=, "fewer than" means <, and "more than" means >.
+
+**Solving inequalities** works almost exactly like solving equations. You can add, subtract, multiply, or divide both sides by the same number. However, there is one critical rule that trips up many students: **when you multiply or divide both sides by a negative number, you must flip the inequality sign.** For example, if -2x > 6, dividing both sides by -2 gives x < -3 (the > flips to <). This is because multiplying by a negative reverses the order of numbers on the number line.
+
+A **compound inequality** combines two inequalities into one statement. For example, -3 < x <= 5 means x is greater than -3 AND less than or equal to 5. You can think of it as x being trapped between two boundaries. To solve a compound inequality like 4 < 2x + 2 <= 10, do the same operation to all three parts: subtract 2 to get 2 < 2x <= 8, then divide by 2 to get 1 < x <= 4.
+
+On the PSAT, inequality problems often come as word problems about budgets, weight limits, or minimum requirements. The key is translating the words into the right inequality, then solving it just like an equation -- but remembering the flip rule when you multiply or divide by a negative.`,
+  questions: [
+    {
+      id: 'w3-t2-q1',
+      text: 'Solve: 2x + 5 > 13',
+      type: 'multiple_choice',
+      options: [
+        { label: 'A', text: 'x > 4' },
+        { label: 'B', text: 'x > 9' },
+        { label: 'C', text: 'x < 4' },
+        { label: 'D', text: 'x < 9' },
+      ],
+      correctAnswer: 'A',
+      explanation: 'Subtract 5 from both sides: 2x > 8. Divide by 2: x > 4. No flip needed because we divided by a positive number.',
+      difficulty: 1,
+      domain: 'algebra',
+    },
+    {
+      id: 'w3-t2-q2',
+      text: 'Solve: -3x <= 12',
+      type: 'multiple_choice',
+      options: [
+        { label: 'A', text: 'x <= -4' },
+        { label: 'B', text: 'x <= 4' },
+        { label: 'C', text: 'x >= -4' },
+        { label: 'D', text: 'x >= 4' },
+      ],
+      correctAnswer: 'C',
+      explanation: 'Divide both sides by -3. Because you are dividing by a negative, flip the sign: x >= -4. This is the most important rule for inequalities!',
+      difficulty: 1,
+      domain: 'algebra',
+    },
+    {
+      id: 'w3-t2-q3',
+      text: 'Liam has $50 to spend on books. Each book costs $7. He also needs to set aside $8 for lunch. What is the maximum number of whole books he can buy?',
+      type: 'multiple_choice',
+      options: [
+        { label: 'A', text: '5 books' },
+        { label: 'B', text: '6 books' },
+        { label: 'C', text: '7 books' },
+        { label: 'D', text: '8 books' },
+      ],
+      correctAnswer: 'B',
+      explanation: 'Set up the inequality: 7b + 8 <= 50. Subtract 8: 7b <= 42. Divide by 7: b <= 6. The maximum number of whole books is 6.',
+      difficulty: 2,
+      domain: 'algebra',
+    },
+    {
+      id: 'w3-t2-q4',
+      text: 'Solve the compound inequality: -1 <= 2x - 5 < 7',
+      type: 'multiple_choice',
+      options: [
+        { label: 'A', text: '-3 <= x < 1' },
+        { label: 'B', text: '2 <= x < 6' },
+        { label: 'C', text: '-1 <= x < 7' },
+        { label: 'D', text: '4 <= x < 12' },
+      ],
+      correctAnswer: 'B',
+      explanation: 'Add 5 to all three parts: -1 + 5 <= 2x < 7 + 5, which gives 4 <= 2x < 12. Divide all parts by 2: 2 <= x < 6.',
+      difficulty: 2,
+      domain: 'algebra',
+    },
+    {
+      id: 'w3-t2-q5',
+      text: 'Solve: -2(x + 4) >= 3x + 7',
+      type: 'multiple_choice',
+      options: [
+        { label: 'A', text: 'x >= -3' },
+        { label: 'B', text: 'x <= -3' },
+        { label: 'C', text: 'x >= 3' },
+        { label: 'D', text: 'x <= 3' },
+      ],
+      correctAnswer: 'B',
+      explanation: 'Distribute: -2x - 8 >= 3x + 7. Subtract 3x: -5x - 8 >= 7. Add 8: -5x >= 15. Divide by -5 (flip the sign): x <= -3.',
+      difficulty: 3,
+      domain: 'algebra',
+    },
+  ],
+};
+
+const w3Topics: Topic[] = [w3Topic1, w3Topic2];
+
+const w3QuizQuestions: Question[] = [
+  {
+    id: 'w3-quiz-q1',
+    text: 'Solve the system: y = 2x and x + y = 15. What is x?',
+    type: 'multiple_choice',
+    options: [
+      { label: 'A', text: 'x = 3' },
+      { label: 'B', text: 'x = 5' },
+      { label: 'C', text: 'x = 7.5' },
+      { label: 'D', text: 'x = 10' },
+    ],
+    correctAnswer: 'B',
+    explanation: 'Substitute y = 2x: x + 2x = 15. 3x = 15. x = 5.',
+    difficulty: 1,
+    domain: 'algebra',
+  },
+  {
+    id: 'w3-quiz-q2',
+    text: 'Solve: 4x - 1 > 11',
+    type: 'multiple_choice',
+    options: [
+      { label: 'A', text: 'x > 2.5' },
+      { label: 'B', text: 'x > 3' },
+      { label: 'C', text: 'x > 4' },
+      { label: 'D', text: 'x > 12' },
+    ],
+    correctAnswer: 'B',
+    explanation: 'Add 1: 4x > 12. Divide by 4: x > 3.',
+    difficulty: 1,
+    domain: 'algebra',
+  },
+  {
+    id: 'w3-quiz-q3',
+    text: 'Solve the system: x + y = 20 and x - y = 6. What is y?',
+    type: 'multiple_choice',
+    options: [
+      { label: 'A', text: 'y = 5' },
+      { label: 'B', text: 'y = 7' },
+      { label: 'C', text: 'y = 13' },
+      { label: 'D', text: 'y = 14' },
+    ],
+    correctAnswer: 'B',
+    explanation: 'Add the equations: 2x = 26, x = 13. Then y = 20 - 13 = 7.',
+    difficulty: 2,
+    domain: 'algebra',
+  },
+  {
+    id: 'w3-quiz-q4',
+    text: 'Solve: -5x + 2 >= 22',
+    type: 'multiple_choice',
+    options: [
+      { label: 'A', text: 'x >= -4' },
+      { label: 'B', text: 'x >= 4' },
+      { label: 'C', text: 'x <= -4' },
+      { label: 'D', text: 'x <= 4' },
+    ],
+    correctAnswer: 'C',
+    explanation: 'Subtract 2: -5x >= 20. Divide by -5 (flip): x <= -4.',
+    difficulty: 2,
+    domain: 'algebra',
+  },
+  {
+    id: 'w3-quiz-q5',
+    text: 'Solve the system: y = 3x - 1 and 2x + y = 14. What is x?',
+    type: 'multiple_choice',
+    options: [
+      { label: 'A', text: 'x = 2' },
+      { label: 'B', text: 'x = 3' },
+      { label: 'C', text: 'x = 4' },
+      { label: 'D', text: 'x = 5' },
+    ],
+    correctAnswer: 'B',
+    explanation: 'Substitute: 2x + (3x - 1) = 14. 5x - 1 = 14. 5x = 15. x = 3.',
+    difficulty: 2,
+    domain: 'algebra',
+  },
+  {
+    id: 'w3-quiz-q6',
+    text: 'A movie theater sells child tickets for $6 and adult tickets for $10. On Saturday, 150 tickets were sold for a total of $1,260. How many child tickets were sold?',
+    type: 'multiple_choice',
+    options: [
+      { label: 'A', text: '40' },
+      { label: 'B', text: '50' },
+      { label: 'C', text: '60' },
+      { label: 'D', text: '90' },
+    ],
+    correctAnswer: 'C',
+    explanation: 'Let c = child, a = adult. c + a = 150 and 6c + 10a = 1260. From the first: a = 150 - c. Substitute: 6c + 10(150 - c) = 1260. 6c + 1500 - 10c = 1260. -4c = -240. c = 60.',
+    difficulty: 2,
+    domain: 'algebra',
+  },
+  {
+    id: 'w3-quiz-q7',
+    text: 'A student must score at least 80 on the final exam to pass a course. If the final exam grade is calculated as 2x - 15, where x is the number of questions answered correctly, what is the minimum number of questions the student must answer correctly?',
+    type: 'multiple_choice',
+    options: [
+      { label: 'A', text: '40' },
+      { label: 'B', text: '45' },
+      { label: 'C', text: '47' },
+      { label: 'D', text: '48' },
+    ],
+    correctAnswer: 'D',
+    explanation: 'Set up: 2x - 15 >= 80. Add 15: 2x >= 95. Divide by 2: x >= 47.5. Since x must be a whole number, x >= 48.',
+    difficulty: 2,
+    domain: 'algebra',
+  },
+  {
+    id: 'w3-quiz-q8',
+    text: 'Solve the system: 4x + 2y = 22 and 3x + 2y = 17. What is x?',
+    type: 'multiple_choice',
+    options: [
+      { label: 'A', text: 'x = 3' },
+      { label: 'B', text: 'x = 4' },
+      { label: 'C', text: 'x = 5' },
+      { label: 'D', text: 'x = 6' },
+    ],
+    correctAnswer: 'C',
+    explanation: 'Subtract the second from the first: (4x + 2y) - (3x + 2y) = 22 - 17. x = 5.',
+    difficulty: 2,
+    domain: 'algebra',
+  },
+  {
+    id: 'w3-quiz-q9',
+    text: 'Solve the compound inequality: 3 < 2x + 1 <= 11',
+    type: 'multiple_choice',
+    options: [
+      { label: 'A', text: '1 < x <= 5' },
+      { label: 'B', text: '2 < x <= 6' },
+      { label: 'C', text: '1 < x <= 6' },
+      { label: 'D', text: '2 < x <= 5' },
+    ],
+    correctAnswer: 'A',
+    explanation: 'Subtract 1 from all parts: 2 < 2x <= 10. Divide by 2: 1 < x <= 5.',
+    difficulty: 3,
+    domain: 'algebra',
+  },
+  {
+    id: 'w3-quiz-q10',
+    text: 'Solve the system: 3x + 4y = 32 and 2x - 4y = -12. What is y?',
+    type: 'multiple_choice',
+    options: [
+      { label: 'A', text: 'y = 2' },
+      { label: 'B', text: 'y = 3' },
+      { label: 'C', text: 'y = 4' },
+      { label: 'D', text: 'y = 5' },
+    ],
+    correctAnswer: 'D',
+    explanation: 'Add the two equations to eliminate y: (3x + 4y) + (2x - 4y) = 32 + (-12). This gives 5x = 20, so x = 4. Substitute into the first equation: 3(4) + 4y = 32. 12 + 4y = 32. 4y = 20. y = 5.',
+    difficulty: 3,
+    domain: 'algebra',
+  },
+];
+
+const w3WorksheetQuestions: Question[] = [];
+
+export {
+  w1Topic1,
+  w1Topic2,
+  w1QuizQuestions,
+  w1WorksheetQuestions,
+  w2Topic1,
+  w2Topic2,
+  w2QuizQuestions,
+  w2WorksheetQuestions,
+  w3Topic1,
+  w3Topic2,
+  w3Topics,
+  w3QuizQuestions,
+  w3WorksheetQuestions,
+};
