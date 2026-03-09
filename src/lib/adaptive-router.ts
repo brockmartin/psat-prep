@@ -124,7 +124,7 @@ function findQuestionForSkill(
   skillId: string,
   targetDifficulty: number,
   allQuestions: Question[],
-  answeredCorrectlyIds: Set<string>,
+  answeredIds: Set<string>,
 ): Question | null {
   // Find all questions mapped to this skill
   const matchingQuestionIds: string[] = []
@@ -143,7 +143,7 @@ function findQuestionForSkill(
   const candidates: Question[] = []
   for (const qid of matchingQuestionIds) {
     const question = questionById.get(qid)
-    if (question && !answeredCorrectlyIds.has(qid)) {
+    if (question && !answeredIds.has(qid)) {
       candidates.push(question)
     }
   }
@@ -174,12 +174,12 @@ function findQuestionForSkill(
 function countUnansweredForSkill(
   skillId: string,
   allQuestions: Question[],
-  answeredCorrectlyIds: Set<string>,
+  answeredIds: Set<string>,
 ): number {
   const questionById = new Map(allQuestions.map((q) => [q.id, q]))
   let count = 0
   for (const [questionId, mappedSkill] of Object.entries(questionSkillMap)) {
-    if (mappedSkill === skillId && questionById.has(questionId) && !answeredCorrectlyIds.has(questionId)) {
+    if (mappedSkill === skillId && questionById.has(questionId) && !answeredIds.has(questionId)) {
       count++
     }
   }
@@ -218,18 +218,18 @@ async function tryGenerateQuestion(
 // Get Answered Question IDs
 // ---------------------------------------------------------------------------
 
-async function getCorrectlyAnsweredQuestionIds(
+async function getAnsweredQuestionIds(
   userId: string,
 ): Promise<Set<string>> {
   try {
     const supabase = createClient()
     if (!supabase) return new Set()
 
+    // Exclude ALL previously answered questions, not just correct ones
     const { data, error } = await supabase
       .from('interaction_log')
       .select('question_id')
       .eq('user_id', userId)
-      .eq('is_correct', true)
 
     if (error || !data) return new Set()
 
@@ -264,7 +264,7 @@ export async function getNextQuestion(
 
   const allSkills = getAllSkills()
   const allQuestions = getAllQuestions()
-  const answeredCorrectly = await getCorrectlyAnsweredQuestionIds(userId)
+  const answeredIds = await getAnsweredQuestionIds(userId)
 
   // Get skills due for spaced repetition review
   const reviewDueSkills = await getSkillsDueForReview(userId)
@@ -282,7 +282,7 @@ export async function getNextQuestion(
       skillId,
       targetDiff,
       allQuestions,
-      answeredCorrectly,
+      answeredIds,
     )
     if (question) {
       return {
@@ -305,7 +305,7 @@ export async function getNextQuestion(
       mastery.skill_id,
       targetDiff,
       allQuestions,
-      answeredCorrectly,
+      answeredIds,
     )
     if (question) {
       return {
@@ -337,7 +337,7 @@ export async function getNextQuestion(
         prereqSkillId,
         targetDiff,
         allQuestions,
-        answeredCorrectly,
+        answeredIds,
       )
       if (question) {
         return {
@@ -355,7 +355,7 @@ export async function getNextQuestion(
       mastery.skill_id,
       targetDiff,
       allQuestions,
-      answeredCorrectly,
+      answeredIds,
     )
     if (question) {
       return {
@@ -387,7 +387,7 @@ export async function getNextQuestion(
           prereqSkillId,
           targetDiff,
           allQuestions,
-          answeredCorrectly,
+          answeredIds,
         )
         if (question) {
           return {
@@ -407,7 +407,7 @@ export async function getNextQuestion(
       skill.id,
       targetDiff,
       allQuestions,
-      answeredCorrectly,
+      answeredIds,
     )
     if (question) {
       return {
@@ -446,7 +446,7 @@ export async function getNextQuestion(
       mastery.skill_id,
       targetDiff,
       allQuestions,
-      answeredCorrectly,
+      answeredIds,
     )
     if (question) {
       return {
@@ -467,13 +467,13 @@ export async function getNextQuestion(
   const skillsToGenerate = allMastery
     .filter((m) => m.mastery_level < 0.8)
     .sort((a, b) => {
-      const aCount = countUnansweredForSkill(a.skill_id, allQuestions, answeredCorrectly)
-      const bCount = countUnansweredForSkill(b.skill_id, allQuestions, answeredCorrectly)
+      const aCount = countUnansweredForSkill(a.skill_id, allQuestions, answeredIds)
+      const bCount = countUnansweredForSkill(b.skill_id, allQuestions, answeredIds)
       return aCount - bCount
     })
 
   for (const mastery of skillsToGenerate) {
-    const unanswered = countUnansweredForSkill(mastery.skill_id, allQuestions, answeredCorrectly)
+    const unanswered = countUnansweredForSkill(mastery.skill_id, allQuestions, answeredIds)
     if (unanswered < 2) {
       const targetDiff = getTargetDifficulty(mastery.mastery_level)
       const generated = await tryGenerateQuestion(
