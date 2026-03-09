@@ -69,6 +69,9 @@ export default function RootLayout({
             <main className="mx-auto max-w-7xl px-4 py-6 sm:px-6 lg:px-8">
               {children}
             </main>
+            <footer className="py-4 text-center text-xs text-muted-foreground/50">
+              Made with ❤️ for BKM
+            </footer>
             <BackToTop />
             <ChatTrigger />
           </SessionProvider>

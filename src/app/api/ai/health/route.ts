@@ -1,5 +1,4 @@
 import { NextResponse } from 'next/server'
-import { getAIClient } from '@/lib/ai/tutor'
 
 /**
  * Diagnostic endpoint — checks every layer of the AI pipeline.
