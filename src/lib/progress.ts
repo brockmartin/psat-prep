@@ -379,7 +379,7 @@ export async function getDiagnosticResults(
       .select("*")
       .eq("user_id", userId)
       .eq("item_id", "diagnostic")
-      .single()
+      .maybeSingle()
 
     if (progressError || !progressData) {
       // Not taken
