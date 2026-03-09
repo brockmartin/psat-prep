@@ -258,13 +258,17 @@ async function getAnsweredQuestionIds(
  */
 export async function getNextQuestion(
   userId: string,
+  extraExcludeIds?: Set<string>,
 ): Promise<NextQuestionResult | null> {
   const allMastery = await getAllSkillMastery(userId)
   const masteryMap = new Map(allMastery.map((m) => [m.skill_id, m]))
 
   const allSkills = getAllSkills()
   const allQuestions = getAllQuestions()
-  const answeredIds = await getAnsweredQuestionIds(userId)
+  const dbAnswered = await getAnsweredQuestionIds(userId)
+
+  // Merge database-tracked answered IDs with client-side session IDs
+  const answeredIds = new Set([...dbAnswered, ...(extraExcludeIds ?? [])])
 
   // Get skills due for spaced repetition review
   const reviewDueSkills = await getSkillsDueForReview(userId)

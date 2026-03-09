@@ -3,6 +3,7 @@ import { getNextQuestion } from '@/lib/adaptive-router'
 
 interface NextQuestionRequestBody {
   userId: string
+  excludeIds?: string[]
 }
 
 export async function POST(request: Request) {
@@ -16,7 +17,8 @@ export async function POST(request: Request) {
       )
     }
 
-    const result = await getNextQuestion(body.userId)
+    const excludeSet = new Set(body.excludeIds ?? [])
+    const result = await getNextQuestion(body.userId, excludeSet)
 
     if (!result) {
       return NextResponse.json(

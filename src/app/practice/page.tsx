@@ -70,6 +70,7 @@ export default function AdaptivePracticePage() {
   const [current, setCurrent] = useState<AdaptiveQuestion | null>(null)
   const [fetchingQuestion, setFetchingQuestion] = useState(true)
   const [noMoreQuestions, setNoMoreQuestions] = useState(false)
+  const answeredIdsRef = useRef<Set<string>>(new Set())
 
   // Answer state
   const [selectedAnswer, setSelectedAnswer] = useState<string | undefined>(
@@ -96,7 +97,7 @@ export default function AdaptivePracticePage() {
       const res = await fetch("/api/adaptive/next-question", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ userId: user.id }),
+        body: JSON.stringify({ userId: user.id, excludeIds: [...answeredIdsRef.current] }),
       })
 
       const data = await res.json()
@@ -136,6 +137,7 @@ export default function AdaptivePracticePage() {
 
     setSelectedAnswer(answer)
     setShowFeedback(true)
+    answeredIdsRef.current.add(current.question.id)
 
     const isCorrect = answer === current.question.correctAnswer
     const timeSpent = Math.round((Date.now() - questionStartRef.current) / 1000)
