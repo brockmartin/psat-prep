@@ -43,13 +43,14 @@ export async function getStreak(userId: string): Promise<StreakInfo> {
       .from('student_profiles')
       .select('current_streak, longest_streak, last_study_date')
       .eq('user_id', userId)
-      .single()
+      .maybeSingle()
 
     if (error) {
-      if (error.code === 'PGRST116') {
-        return { current: 0, longest: 0, lastStudyDate: null }
-      }
       console.error('[streaks] getStreak error:', error.message)
+      return { current: 0, longest: 0, lastStudyDate: null }
+    }
+
+    if (!data) {
       return { current: 0, longest: 0, lastStudyDate: null }
     }
 
@@ -89,14 +90,15 @@ export async function updateStreak(userId: string): Promise<StreakUpdateResult> 
       .from('student_profiles')
       .select('current_streak, longest_streak, last_study_date')
       .eq('user_id', userId)
-      .single()
+      .maybeSingle()
 
     if (profileError) {
-      if (profileError.code === 'PGRST116') {
-        // No profile — cannot update streak
-        return { current: 0, longest: 0, isNewRecord: false }
-      }
       console.error('[streaks] updateStreak profile error:', profileError.message)
+      return { current: 0, longest: 0, isNewRecord: false }
+    }
+
+    if (!profile) {
+      // No profile — cannot update streak
       return { current: 0, longest: 0, isNewRecord: false }
     }
 

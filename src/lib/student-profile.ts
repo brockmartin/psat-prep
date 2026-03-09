@@ -50,15 +50,13 @@ export async function getProfile(userId: string): Promise<StudentProfile | null>
       .from('student_profiles')
       .select('*')
       .eq('user_id', userId)
-      .single()
+      .maybeSingle()
 
     if (error) {
-      // PGRST116 = "no rows returned" — not an error for us
-      if (error.code === 'PGRST116') return null
       console.error('getProfile error:', error.message)
       return null
     }
-    return data as StudentProfile
+    return data as StudentProfile | null
   } catch (err) {
     console.error('getProfile unexpected error:', err)
     return null
@@ -198,14 +196,13 @@ export async function getSkillMastery(
       .select('*')
       .eq('user_id', userId)
       .eq('skill_id', skillId)
-      .single()
+      .maybeSingle()
 
     if (error) {
-      if (error.code === 'PGRST116') return null
       console.error('getSkillMastery error:', error.message)
       return null
     }
-    return data as SkillMastery
+    return data as SkillMastery | null
   } catch (err) {
     console.error('getSkillMastery unexpected error:', err)
     return null
@@ -287,13 +284,13 @@ export async function updateSkillMastery(
       .eq('user_id', userId)
       .eq('skill_id', skillId)
       .select('*')
-      .single()
+      .maybeSingle()
 
     if (error) {
       console.error('updateSkillMastery update error:', error.message)
       return null
     }
-    return updated as SkillMastery
+    return updated as SkillMastery | null
   } catch (err) {
     console.error('updateSkillMastery unexpected error:', err)
     return null

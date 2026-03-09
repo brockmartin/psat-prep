@@ -15,8 +15,7 @@ import { Button } from "@/components/ui/button"
 import { Card, CardContent } from "@/components/ui/card"
 import { Progress } from "@/components/ui/progress"
 import { Skeleton } from "@/components/ui/skeleton"
-import { QuizEngine } from "@/components/quiz/quiz-engine"
-import type { QuizResult } from "@/components/quiz/quiz-engine"
+import { AdaptiveDiagnostic } from "@/components/onboarding/adaptive-diagnostic"
 import { useAuth } from "@/hooks/use-auth"
 import {
   createProfile,
@@ -24,7 +23,6 @@ import {
   updateProfile,
   batchUpdateMastery,
 } from "@/lib/student-profile"
-import { getSkillForQuestion } from "@/lib/skills"
 import { diagnosticTest } from "@/data/diagnostic"
 import type { Domain } from "@/types/content"
 import { cn } from "@/lib/utils"
@@ -268,10 +266,18 @@ export default function OnboardingPage() {
     }
   }
 
-  async function handleDiagnosticComplete(results: QuizResult) {
+  async function handleDiagnosticComplete(
+    responses: {
+      questionId: string
+      selectedAnswer: string
+      correctAnswer: string
+      isCorrect: boolean
+      skillId: string
+    }[],
+  ) {
     // Calculate domain breakdown
     const domainMap = new Map<Domain, { correct: number; total: number }>()
-    for (const resp of results.responses) {
+    for (const resp of responses) {
       const question = diagnosticTest.questions.find((q) => q.id === resp.questionId)
       if (!question) continue
       const entry = domainMap.get(question.domain) ?? { correct: 0, total: 0 }
@@ -302,20 +308,13 @@ export default function OnboardingPage() {
 
     // Save skill mastery if user is logged in
     if (user) {
-      const updates = results.responses
-        .map((resp) => {
-          const skillId = getSkillForQuestion(resp.questionId)
-          if (!skillId) return null
-          return {
-            skillId,
-            isCorrect: resp.isCorrect,
-            answer: resp.selectedAnswer,
-          }
-        })
-        .filter(
-          (u): u is { skillId: string; isCorrect: boolean; answer: string } =>
-            u !== null
-        )
+      const updates = responses
+        .filter((resp) => resp.skillId)
+        .map((resp) => ({
+          skillId: resp.skillId,
+          isCorrect: resp.isCorrect,
+          answer: resp.selectedAnswer,
+        }))
 
       await batchUpdateMastery(user.id, updates)
 
@@ -540,14 +539,7 @@ export default function OnboardingPage() {
           </p>
         </div>
 
-        <QuizEngine
-          questions={diagnosticTest.questions}
-          title="Quick Diagnostic"
-          showExplanationImmediately={false}
-          showTimer={false}
-          allowReview={false}
-          onComplete={handleDiagnosticComplete}
-        />
+        <AdaptiveDiagnostic onComplete={handleDiagnosticComplete} />
       </div>
     )
   }
